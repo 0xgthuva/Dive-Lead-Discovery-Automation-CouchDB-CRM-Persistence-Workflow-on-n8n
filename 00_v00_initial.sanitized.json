@@ -1,0 +1,3077 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "<DISCORD_GUILD_ID>",
+          "mode": "id"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "<DISCORD_CHANNEL_ID>",
+          "mode": "id"
+        },
+        "content": "={{ $json.content }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        7920,
+        2768
+      ],
+      "id": "99dd7e83-d473-4c88-81a4-60272ed356f2",
+      "name": "Send a message",
+      "webhookId": "<DISCORD_WEBHOOK_ID>"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"run_mode\": \"live_discovery\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        2656
+      ],
+      "id": "b995c67e-160d-46de-ac49-4b2b056aac0b",
+      "name": "Choose Run Mode"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.run_mode }}",
+                    "rightValue": "crm_smoke_test",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "58da454a-c1d8-41d1-9ad8-78c89bb3b58b"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "CRM_SMOKE_TEST"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.run_mode }}",
+                    "rightValue": "live_discovery",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "8d6119c7-80b6-4486-8df1-3ce61871e5a3"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "LIVE_DISCOVERY"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        336,
+        2656
+      ],
+      "id": "ecb87f06-7603-427c-8705-cd652ea0bec3",
+      "name": "Run Mode Switch"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"run_id\": \"RUN-SMOKE-TEST\",\n  \"run_doc_id\": \"run:RUN-SMOKE-TEST\",\n  \"run_started_at\": \"2026-07-30T00:00:00.000Z\",\n  \"domain\": \"crm-test.invalid\",\n  \"discovery_source\": \"crm_smoke_test\",\n  \"discovery_query\": \"manual crm smoke test\",\n  \"company_name\": \"CRM Test Company\",\n  \"website\": \"https://crm-test.invalid\",\n  \"business_country\": \"United Kingdom\",\n  \"persona\": \"tour_operator_travel_agency\",\n  \"persona_confidence\": 90,\n  \"icp_score\": 70,\n  \"intent_score\": 80,\n  \"priority\": \"A\",\n  \"services\": [\n    \"test service\"\n  ],\n  \"destinations_sold\": [\n    \"Maldives\"\n  ],\n  \"intent_signals\": [\n    \"CRM smoke test signal\"\n  ],\n  \"evidence\": [\n    {\n      \"fact\": \"This is a CRM smoke test record.\",\n      \"source_url\": \"https://crm-test.invalid\"\n    }\n  ],\n  \"contacts_found\": [\n    {\n      \"name\": \"Test Contact\",\n      \"title\": \"Partnerships Manager\",\n      \"role\": \"partnerships\",\n      \"public_email\": \"partnerships@crm-test.invalid\"\n    }\n  ],\n  \"public_emails_found\": [\n    \"partnerships@crm-test.invalid\"\n  ],\n  \"personalized_first_line\": \"Your dive travel portfolio aligns with a Maldivian charter partnership.\",\n  \"reason\": \"CRM smoke test lead.\",\n  \"phone\": \"+44 20 0000 0000\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1296,
+        2576
+      ],
+      "id": "c059aec3-aea1-469e-9947-3bbc89e6418a",
+      "name": "CRM Smoke Test Lead"
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = new Date();\nconst pad = n => String(n).padStart(2, '0');\n\nconst stamp =\n  now.getUTCFullYear() +\n  pad(now.getUTCMonth() + 1) +\n  pad(now.getUTCDate()) +\n  '-' +\n  pad(now.getUTCHours()) +\n  pad(now.getUTCMinutes()) +\n  pad(now.getUTCSeconds());\n\nconst run_id = `RUN-${stamp}`;\n\nreturn [{\n  json: {\n    run_id,\n    run_doc_id: `run:${run_id}`,\n    run_started_at: now.toISOString(),\n    type: 'run',\n    status: 'started',\n    workflow: 'Dive Lead Discovery + <COUCHDB_CREDENTIAL_NAME> Persistence V1',\n    started_at: now.toISOString()\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        2816
+      ],
+      "id": "47b68725-82ce-4fe4-94fc-d407e3cb49ae",
+      "name": "Create Run Context"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ (($env.COUCHDB_BASE_URL || 'https://<COUCHDB_PROXY_DOMAIN>').replace(/\\/$/, '')) + '/' + ($env.CRM_DB || '<CRM_DB_NAME>') + '/' + encodeURIComponent($json._id || $json.run_doc_id) }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { _id: $json.run_doc_id, type: 'run', run_id: $json.run_id, status: 'started', started_at: $json.started_at, workflow: $json.workflow } }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          },
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        784,
+        2816
+      ],
+      "id": "d9b8ce9c-9a42-407c-9c19-10a86ef3051a",
+      "name": "PUT Run Document"
+    },
+    {
+      "parameters": {
+        "jsCode": "const ctx = $('Create Run Context').item.json;\nconst status = Number($json.statusCode || 0);\n\nif (status && status >= 400) {\n  throw new Error(`Could not create run document in CouchDB. Status: ${status}`);\n}\n\nreturn [{ json: ctx }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1008,
+        2816
+      ],
+      "id": "a7f9d258-6d47-42be-b735-d8cc20777372",
+      "name": "Pass Run Context"
+    },
+    {
+      "parameters": {
+        "jsCode": "const j = $json;\nconst packet = j.research_packet || {};\n\nfunction asText(value) {\n  if (typeof value === 'string') return value;\n  if (value == null) return '';\n  try { return JSON.stringify(value); } catch { return String(value); }\n}\n\nfunction cleanEmail(value) {\n  if (!value) return '';\n\n  const e = String(value)\n    .trim()\n    .toLowerCase()\n    .replace(/^mailto:/i, '')\n    .split('?')[0]\n    .trim();\n\n  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(e)) return '';\n  if (/^(noreply|no-reply|donotreply|do-not-reply|example|test)@/i.test(e)) return '';\n  if (e.includes('@example.')) return '';\n\n  return e;\n}\n\nfunction normalizeInstagramUrl(value) {\n  if (!value) return '';\n\n  let s = String(value)\n    .trim()\n    .replace(/\\\\\\//g, '/')\n    .replace(/[)\\],.'\"]+$/g, '')\n    .replace(/^http:\\/\\//i, 'https://');\n\n  if (!/^https?:\\/\\/(www\\.)?instagram\\.com\\//i.test(s)) return '';\n\n  const lower = s.toLowerCase();\n\n  if (/instagram\\.com\\/(p|reel|stories|explore|accounts)\\//i.test(lower)) {\n    return '';\n  }\n\n  s = s.split('?')[0].split('#')[0];\n\n  if (!s.endsWith('/')) s += '/';\n\n  return s;\n}\n\nfunction extractEmails(text) {\n  return [\n    ...new Set(\n      (String(text || '').match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}/gi) || [])\n        .map(cleanEmail)\n        .filter(Boolean)\n    )\n  ];\n}\n\nfunction extractInstagram(text) {\n  const out = new Set();\n  const safeText = String(text || '').replace(/\\\\\\//g, '/');\n\n  const urlMatches =\n    safeText.match(/https?:\\/\\/(?:www\\.)?instagram\\.com\\/[A-Za-z0-9_.]+\\/?/gi) || [];\n\n  for (const raw of urlMatches) {\n    const clean = normalizeInstagramUrl(raw);\n    if (clean) out.add(clean);\n  }\n\n  const handleRegex = /\\b(?:instagram|ig)\\s*[:：]\\s*@([a-z0-9._]{2,30})/gi;\n  let match;\n\n  while ((match = handleRegex.exec(safeText)) !== null) {\n    out.add(`https://www.instagram.com/${match[1].toLowerCase()}/`);\n  }\n\n  return [...out];\n}\n\nfunction unique(values) {\n  return [...new Set((values || []).filter(Boolean).map(v => String(v).trim()).filter(Boolean))];\n}\n\nlet text = '';\n\ntext += '\\n' + asText(packet.homepage);\n\nfor (const p of (packet.pages || [])) {\n  text += '\\n' + asText(p.url);\n  text += '\\n' + asText(p.markdown);\n}\n\nconst public_emails = unique([\n  ...(j.public_emails_found || []),\n  ...(j.homepage_emails || []),\n  ...(j.mailto_emails || []),\n  ...(packet.public_emails_found || []),\n  ...(packet.homepage_emails || []),\n  ...(packet.mailto_emails || []),\n  ...extractEmails(text)\n]).map(cleanEmail).filter(Boolean).slice(0, 20);\n\nfunction likelyGeneric(email) {\n  const local = String(email || '').split('@')[0].toLowerCase();\n  return /^(info|hello|contact|sales|travel|trips|reservations|booking|bookings|enquiries|enquiry|admin|office|support|team)$/.test(local);\n}\n\nconst instagram_links = unique([\n  ...(j.instagram_links || []),\n  ...(j.social_links?.instagram || []),\n  ...(j.contact_hints?.instagram_links || []),\n  ...(packet.instagram_links || []),\n  ...(packet.social_links?.instagram || []),\n  ...extractInstagram(text)\n]).map(normalizeInstagramUrl).filter(Boolean).slice(0, 10);\n\nconst contact_email_hints = public_emails.map(email => ({\n  public_email: email,\n  role: likelyGeneric(email) ? 'generic_public_inbox' : 'public_email',\n  source: 'website_text_regex'\n}));\n\nconst contact_hints = {\n  ...(j.contact_hints || {}),\n  ...(packet.contact_hints || {}),\n  public_emails,\n  contact_email_hints,\n  instagram_links\n};\n\nconst social_links = {\n  ...(j.social_links || {}),\n  ...(packet.social_links || {}),\n  instagram: instagram_links\n};\n\nreturn [\n  {\n    json: {\n      ...j,\n      public_emails_found: public_emails,\n      instagram_links,\n      social_links,\n      research_packet: {\n        ...packet,\n        contact_hints,\n        public_emails_found: public_emails,\n        instagram_links,\n        social_links\n      },\n      contact_hints\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2832,
+        3296
+      ],
+      "id": "e7fa0739-fef4-48a7-bb42-5c5fc9b21c14",
+      "name": "Extract Public Contact Hints"
+    },
+    {
+      "parameters": {
+        "content": "## CRM layer added here\n\nThis section runs after `Final Lead Record`.\n\nIt performs:\n\n1. Normalize domain and company ID\n2. Upsert `company:*`\n3. Bulk upsert `contact:*`\n4. Create one `discovery:*` event\n5. Run outreach eligibility guard - accepts EMAIL, PHONE, or INSTAGRAM/social link as a valid contact channel (fixed: used to require email only, which silently held every phone/Instagram-only lead forever)\n6. Produce a clean Google Sheets row for READY leads, and a second Manual Review sheet row for HOLD leads (see Manual Review Notes)\n7. Discord batch summary, including how many prospects were logged this run\n\nObsidian is not written directly. Use `<CRM_DB_NAME>` as source of truth and Obsidian as a human presentation layer later.",
+        "height": 380,
+        "width": 500,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3072,
+        2608
+      ],
+      "id": "d1daccd8-853c-4105-a176-43a3ca5ceb19",
+      "name": "CRM Persistence Notes"
+    },
+    {
+      "parameters": {
+        "jsCode": "const allInputs = $input.all();\n\nlet j =\n  allInputs.find(item =>\n    item.json?.domain ||\n    item.json?.website ||\n    item.json?.company_name\n  )?.json ||\n  allInputs[0]?.json ||\n  {};\n\n// Defensive unwrap in case n8n passes a nested object/array\nif (Array.isArray(j)) {\n  j = j[0] || {};\n}\n\nif (j.json && typeof j.json === 'object') {\n  j = j.json;\n}\n\nif (j.body && typeof j.body === 'object') {\n  j = j.body;\n}\n\nfunction canonicalDomain(value) {\n  if (!value) return '';\n\n  let s = String(value).trim().toLowerCase();\n\n  // Remove quotes/spaces\n  s = s.replace(/^['\"]|['\"]$/g, '').trim();\n\n  // Remove protocol\n  s = s.replace(/^[a-z][a-z0-9+.-]*:\\/\\//i, '');\n\n  // Remove protocol-relative //\n  s = s.replace(/^\\/\\//, '');\n\n  // Remove user/pass if ever present\n  s = s.replace(/^.*@/, '');\n\n  // Keep hostname only\n  s = s.split(/[/?#]/)[0];\n\n  // Remove port\n  s = s.replace(/:\\d+$/, '');\n\n  // Remove www and trailing dot\n  s = s\n    .replace(/^www\\./, '')\n    .replace(/\\.$/, '');\n\n  // Remove accidental whitespace\n  s = s.trim();\n\n  // Basic validation\n  if (!s || !s.includes('.')) return '';\n  if (!/^[a-z0-9.-]+$/.test(s)) return '';\n\n  return s;\n}\n\nfunction cleanEmail(value) {\n  if (!value) return '';\n\n  const e = String(value).trim().toLowerCase();\n\n  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(e)) return '';\n  if (/^(noreply|no-reply|donotreply|do-not-reply)@/i.test(e)) return '';\n\n  return e;\n}\n\nfunction normalizeName(value) {\n  return String(value || '')\n    .trim()\n    .replace(/\\s+/g, ' ')\n    .toLowerCase();\n}\n\nfunction slug(value) {\n  return String(value || '')\n    .trim()\n    .toLowerCase()\n    .replace(/[^a-z0-9]+/g, '-')\n    .replace(/^-+|-+$/g, '')\n    .slice(0, 80);\n}\n\nfunction localPartRole(email) {\n  const local = String(email || '').split('@')[0].toLowerCase();\n\n  if (/^(info|hello|contact|sales|travel|trips|reservations|booking|bookings|enquiries|enquiry|admin|office|support|team)$/.test(local)) {\n    return 'generic_public_inbox';\n  }\n\n  return 'published_email';\n}\n\nconst domainInput =\n  j.domain ||\n  j.website ||\n  j.canonical_domain ||\n  j.company_website ||\n  '';\n\nconst domain = canonicalDomain(domainInput);\n\nif (!domain) {\n  throw new Error(\n    'Unable to determine company domain. Debug input: ' +\n    JSON.stringify({\n      picked_input: domainInput,\n      domain: j.domain,\n      website: j.website,\n      canonical_domain: j.canonical_domain,\n      company_website: j.company_website,\n      company_name: j.company_name,\n      available_keys: Object.keys(j || {})\n    })\n  );\n}\n\nconst company_id = `company:${domain}`;\n\nconst rawContacts = [];\n\n// Contacts from DeepSeek / research output\nfor (const c of (j.contacts_found || [])) {\n  if (!c || typeof c !== 'object') continue;\n  rawContacts.push(c);\n}\n\n// Public emails scraped from site\nfor (const email of (j.public_emails_found || [])) {\n  const cleaned = cleanEmail(email);\n\n  if (!cleaned) continue;\n\n  rawContacts.push({\n    name: '',\n    title: '',\n    role: localPartRole(cleaned),\n    public_email: cleaned,\n    source: 'public_site_email'\n  });\n}\n\n// Optional contact hints\nfor (const h of (j.contact_hints?.contact_email_hints || [])) {\n  if (!h || typeof h !== 'object') continue;\n  rawContacts.push(h);\n}\n\nconst seenContactKeys = new Set();\nconst contact_candidates = [];\n\nfor (const raw of rawContacts) {\n  const email = cleanEmail(raw.public_email || raw.email);\n  const name = String(raw.name || '').trim().replace(/\\s+/g, ' ');\n  const normalized_name = normalizeName(name);\n  const title = String(raw.title || raw.job_title || '').trim();\n  const role = String(raw.role || raw.role_category || '').trim();\n\n  let contact_id = '';\n\n  if (email) {\n    contact_id = `contact:${email}`;\n  } else if (normalized_name && normalized_name.split(' ').length >= 2) {\n    contact_id = `contact:${domain}:${slug(normalized_name)}`;\n  } else {\n    continue;\n  }\n\n  if (seenContactKeys.has(contact_id)) continue;\n  seenContactKeys.add(contact_id);\n\n  const is_generic =\n    email ? localPartRole(email) === 'generic_public_inbox' : false;\n\n  contact_candidates.push({\n    _id: contact_id,\n    type: 'contact',\n    company_id,\n    name: name || email || '',\n    normalized_name,\n    job_title: title,\n    role_category: role || (email ? localPartRole(email) : 'published_person'),\n    email: email || null,\n    email_status: email ? 'published' : 'unknown',\n    contact_score: email ? (is_generic ? 55 : 85) : 45,\n    is_primary: false,\n    source: raw.source || 'deepseek_or_public_site'\n  });\n}\n\nif (contact_candidates.length) {\n  contact_candidates.sort(\n    (a, b) => Number(b.contact_score || 0) - Number(a.contact_score || 0)\n  );\n\n  contact_candidates[0].is_primary = true;\n}\n\nconst now = new Date().toISOString();\n\nconst run_id =\n  j.run_id ||\n  j.crm_run_id ||\n  `RUN-${now.slice(0, 10).replace(/-/g, '')}-MANUAL`;\n\nreturn [\n  {\n    json: {\n      ...j,\n      crm_normalized_at: now,\n      canonical_domain: domain,\n      company_id,\n      crm_run_id: run_id,\n      contact_candidates,\n      primary_contact_id: contact_candidates[0]?._id || null\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3440,
+        3088
+      ],
+      "id": "8445de10-8dd0-4d54-99c1-20bad0c9abe4",
+      "name": "Normalize CRM Lead"
+    },
+    {
+      "parameters": {
+        "url": "={{ (($env.COUCHDB_BASE_URL || 'https://<COUCHDB_PROXY_DOMAIN>').replace(/\\/$/, '')) + '/' + ($env.CRM_DB || '<CRM_DB_NAME>') + '/' + encodeURIComponent($json.company_id) }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          },
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3664,
+        3088
+      ],
+      "id": "fd7a9de9-b1e2-499e-b23e-e770fa28a38f",
+      "name": "GET CRM Company"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.statusCode }}",
+                    "rightValue": 404,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    },
+                    "id": "313b7469-381b-448b-b835-38ed75b5db53"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "NEW"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.statusCode }}",
+                    "rightValue": 200,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    },
+                    "id": "9eb20e4c-dfaa-4bd8-a2a9-9f1daacc1a49"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "EXISTING"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        3872,
+        3088
+      ],
+      "id": "8b710d6d-edb1-4c47-a7d7-6433f252f466",
+      "name": "Company Lookup Status"
+    },
+    {
+      "parameters": {
+        "jsCode": "const incoming = $('Normalize CRM Lead').item.json;\nconst now = new Date().toISOString();\n\nreturn [{\n  json: {\n    _id: incoming.company_id,\n    type: 'company',\n\n    canonical_domain: incoming.canonical_domain,\n    company_name: incoming.company_name || incoming.canonical_domain,\n    website: incoming.website || `https://${incoming.canonical_domain}`,\n    country: incoming.business_country || '',\n\n    persona: incoming.persona || '',\n    priority: incoming.priority || '',\n    lifecycle_status: incoming.priority === 'REJECT' ? 'rejected' : 'new',\n\n    first_seen_at: now,\n    last_seen_at: now,\n    times_discovered: 1,\n    last_run_id: incoming.crm_run_id,\n\n    best_icp_score: Number(incoming.icp_score || 0),\n    best_intent_score: Number(incoming.intent_score || 0),\n    best_priority: incoming.priority || '',\n\n    do_not_contact: false,\n    active_contact_id: null,\n    last_contacted_at: null,\n    next_contact_allowed_at: null,\n\n    latest_profile: {\n      services: incoming.services || [],\n      destinations_sold: incoming.destinations_sold || [],\n      intent_signals: incoming.intent_signals || [],\n      evidence: incoming.evidence || [],\n      reason: incoming.reason || '',\n      personalized_first_line: incoming.personalized_first_line || ''\n    },\n\n    source: {\n      discovery_source: incoming.discovery_source || '',\n      discovery_query: incoming.discovery_query || ''\n    }\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4112,
+        2928
+      ],
+      "id": "c3d51377-7501-4403-acf9-c8217cca6a3e",
+      "name": "Build New CRM Company"
+    },
+    {
+      "parameters": {
+        "jsCode": "const existing = $json.body;\nconst incoming = $('Normalize CRM Lead').item.json;\nconst now = new Date().toISOString();\n\nif (!existing?._id || !existing?._rev) {\n  throw new Error('Existing company is missing _id or _rev');\n}\n\nfunction priorityRank(p) {\n  return ({ S: 5, A: 4, B: 3, C: 2, REJECT: 1 })[String(p || '').toUpperCase()] || 0;\n}\n\nconst existingPriority = existing.best_priority || existing.priority || '';\nconst incomingPriority = incoming.priority || '';\nconst bestPriority = priorityRank(incomingPriority) > priorityRank(existingPriority)\n  ? incomingPriority\n  : existingPriority;\n\nreturn [{\n  json: {\n    ...existing,\n\n    type: 'company',\n\n    canonical_domain: existing.canonical_domain || incoming.canonical_domain,\n    company_name: incoming.company_name || existing.company_name || incoming.canonical_domain,\n    website: incoming.website || existing.website || `https://${incoming.canonical_domain}`,\n    country: incoming.business_country || existing.country || '',\n\n    persona: incoming.persona || existing.persona || '',\n    priority: incoming.priority || existing.priority || '',\n    lifecycle_status: existing.lifecycle_status || (incoming.priority === 'REJECT' ? 'rejected' : 'new'),\n\n    first_seen_at: existing.first_seen_at || now,\n    last_seen_at: now,\n    times_discovered: Number(existing.times_discovered || 0) + 1,\n    last_run_id: incoming.crm_run_id,\n\n    best_icp_score: Math.max(\n      Number(existing.best_icp_score || 0),\n      Number(incoming.icp_score || 0)\n    ),\n\n    best_intent_score: Math.max(\n      Number(existing.best_intent_score || 0),\n      Number(incoming.intent_score || 0)\n    ),\n\n    best_priority: bestPriority,\n\n    do_not_contact: Boolean(existing.do_not_contact),\n    active_contact_id: existing.active_contact_id ?? null,\n    last_contacted_at: existing.last_contacted_at ?? null,\n    next_contact_allowed_at: existing.next_contact_allowed_at ?? null,\n\n    latest_profile: {\n      services: incoming.services || [],\n      destinations_sold: incoming.destinations_sold || [],\n      intent_signals: incoming.intent_signals || [],\n      evidence: incoming.evidence || [],\n      reason: incoming.reason || '',\n      personalized_first_line: incoming.personalized_first_line || ''\n    },\n\n    source: {\n      discovery_source: incoming.discovery_source || existing.source?.discovery_source || '',\n      discovery_query: incoming.discovery_query || existing.source?.discovery_query || ''\n    },\n\n    _rev: existing._rev\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4112,
+        3168
+      ],
+      "id": "cbbf157f-3f06-4242-b2cc-a5a60129f5e5",
+      "name": "Build Updated CRM Company"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ (($env.COUCHDB_BASE_URL || 'https://<COUCHDB_PROXY_DOMAIN>').replace(/\\/$/, '')) + '/' + ($env.CRM_DB || '<CRM_DB_NAME>') + '/' + encodeURIComponent($json._id) }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          },
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        4352,
+        3056
+      ],
+      "id": "84c7da8a-833e-4fa0-8ef0-7efdb2317ef1",
+      "name": "PUT CRM Company"
+    },
+    {
+      "parameters": {
+        "jsCode": "const status = Number($json.statusCode);\n\nlet write_result;\n\nif (status === 201 || status === 202) {\n  write_result = 'SUCCESS';\n} else if (status === 409) {\n  write_result = 'CONFLICT';\n} else {\n  write_result = 'ERROR';\n}\n\nreturn [{\n  json: {\n    ...$json,\n    write_result,\n  },\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4576,
+        3056
+      ],
+      "id": "b99d832d-e2bb-440d-9e43-ea5db843696e",
+      "name": "Classify Company PUT"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.write_result }}",
+                    "rightValue": "SUCCESS",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "4876f08d-b3a1-4cdd-9a80-5fdec1eb7155"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "SUCCESS"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.write_result }}",
+                    "rightValue": "CONFLICT",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "6aeddbc6-3902-4b4d-a4c3-d531d126fa70"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "CONFLICT"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.write_result }}",
+                    "rightValue": "ERROR",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "7314f51a-e4f4-4ef5-ade9-9a15a6fdc523"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ERROR"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        4800,
+        3056
+      ],
+      "id": "3a6aacb9-081c-4363-b92e-77de864f75a6",
+      "name": "Company PUT Result"
+    },
+    {
+      "parameters": {
+        "url": "={{ (($env.COUCHDB_BASE_URL || 'https://<COUCHDB_PROXY_DOMAIN>').replace(/\\/$/, '')) + '/' + ($env.CRM_DB || '<CRM_DB_NAME>') + '/' + encodeURIComponent($('Normalize CRM Lead').item.json.company_id) }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        5040,
+        2912
+      ],
+      "id": "a17791c8-1968-47ed-9247-9cef4b758bef",
+      "name": "GET Saved CRM Company"
+    },
+    {
+      "parameters": {
+        "url": "={{ (($env.COUCHDB_BASE_URL || 'https://<COUCHDB_PROXY_DOMAIN>').replace(/\\/$/, '')) + '/' + ($env.CRM_DB || '<CRM_DB_NAME>') + '/' + encodeURIComponent($('Normalize CRM Lead').item.json.company_id) }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        5040,
+        3120
+      ],
+      "id": "f804b045-0a3c-4129-9859-1d5a2b9d020b",
+      "name": "GET Latest Company After Conflict"
+    },
+    {
+      "parameters": {
+        "jsCode": "const latest = $json;\nconst incoming = $('Normalize CRM Lead').item.json;\nconst now = new Date().toISOString();\n\nif (!latest?._id || !latest?._rev) {\n  throw new Error('Retry: latest company is missing _id or _rev');\n}\n\nreturn [{\n  json: {\n    ...latest,\n\n    type: 'company',\n\n    canonical_domain: latest.canonical_domain || incoming.canonical_domain,\n    company_name: incoming.company_name || latest.company_name || incoming.canonical_domain,\n    website: incoming.website || latest.website || `https://${incoming.canonical_domain}`,\n    country: incoming.business_country || latest.country || '',\n\n    persona: incoming.persona || latest.persona || '',\n    priority: incoming.priority || latest.priority || '',\n    lifecycle_status: latest.lifecycle_status || (incoming.priority === 'REJECT' ? 'rejected' : 'new'),\n\n    first_seen_at: latest.first_seen_at || now,\n    last_seen_at: now,\n    times_discovered: Number(latest.times_discovered || 0) + 1,\n    last_run_id: incoming.crm_run_id,\n\n    best_icp_score: Math.max(Number(latest.best_icp_score || 0), Number(incoming.icp_score || 0)),\n    best_intent_score: Math.max(Number(latest.best_intent_score || 0), Number(incoming.intent_score || 0)),\n    best_priority: latest.best_priority || incoming.priority || '',\n\n    do_not_contact: Boolean(latest.do_not_contact),\n    active_contact_id: latest.active_contact_id ?? null,\n    last_contacted_at: latest.last_contacted_at ?? null,\n    next_contact_allowed_at: latest.next_contact_allowed_at ?? null,\n\n    latest_profile: {\n      services: incoming.services || [],\n      destinations_sold: incoming.destinations_sold || [],\n      intent_signals: incoming.intent_signals || [],\n      evidence: incoming.evidence || [],\n      reason: incoming.reason || '',\n      personalized_first_line: incoming.personalized_first_line || ''\n    },\n\n    source: {\n      discovery_source: incoming.discovery_source || latest.source?.discovery_source || '',\n      discovery_query: incoming.discovery_query || latest.source?.discovery_query || ''\n    },\n\n    _rev: latest._rev\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5264,
+        3120
+      ],
+      "id": "bf320e6e-0465-457e-a3f4-6cc7772c1d46",
+      "name": "Rebuild Company Retry"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ (($env.COUCHDB_BASE_URL || 'https://<COUCHDB_PROXY_DOMAIN>').replace(/\\/$/, '')) + '/' + ($env.CRM_DB || '<CRM_DB_NAME>') + '/' + encodeURIComponent($json._id) }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          },
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        5488,
+        3120
+      ],
+      "id": "80208b7b-9d00-494e-92a9-4f5cd8c8b97f",
+      "name": "PUT Company Retry"
+    },
+    {
+      "parameters": {
+        "jsCode": "const status = Number($json.statusCode);\nconst retry_result = (status === 201 || status === 202) ? 'SUCCESS' : 'ERROR';\n\nreturn [{ json: { ...$json, retry_result } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5712,
+        3120
+      ],
+      "id": "e282f33d-7d27-4e89-9342-b70cf8e59c42",
+      "name": "Classify Company Retry"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.retry_result }}",
+                    "rightValue": "SUCCESS",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e51ea54c-5a92-4208-a1ff-bc73157ce6ff"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "SUCCESS"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.retry_result }}",
+                    "rightValue": "ERROR",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "931d3928-6f3c-4ad1-9c9a-5028f6f4452e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ERROR"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        5920,
+        3120
+      ],
+      "id": "7c7184be-ba7d-4578-88d7-6c2a752e5b33",
+      "name": "Company Retry Result"
+    },
+    {
+      "parameters": {
+        "jsCode": "const lead = $('Normalize CRM Lead').item.json;\nreturn [{\n  json: {\n    crm_error: true,\n    stage: 'company_upsert',\n    company_id: lead.company_id,\n    statusCode: $json.statusCode,\n    body: $json.body || $json\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5040,
+        3344
+      ],
+      "id": "9c900f9e-fea9-48d0-b554-4e28c4624823",
+      "name": "CRM Company Error Output"
+    },
+    {
+      "parameters": {
+        "jsCode": "const company = $json;\nconst lead = $('Normalize CRM Lead').item.json;\nconst now = new Date().toISOString();\n\nconst contact_candidates = (lead.contact_candidates || []).map(c => ({\n  ...c,\n  company_id: company._id,\n  first_seen_at: now,\n  last_seen_at: now\n}));\n\nreturn [{\n  json: {\n    company_id: company._id,\n    company_rev: company._rev,\n    canonical_domain: lead.canonical_domain,\n    contact_ids: contact_candidates.map(c => c._id),\n    contact_candidates\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5280,
+        2912
+      ],
+      "id": "65417781-8930-44c2-8a82-69307d800e15",
+      "name": "Build CRM Contact Keys"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ (($env.COUCHDB_BASE_URL || 'https://<COUCHDB_PROXY_DOMAIN>').replace(/\\/$/, '')) + '/' + ($env.CRM_DB || '<CRM_DB_NAME>') + '/_all_docs?include_docs=true' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { keys: $json.contact_ids } }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        5504,
+        2912
+      ],
+      "id": "62ccd8d7-2433-45a0-890b-100d744e8ff3",
+      "name": "GET Existing Contacts Bulk"
+    },
+    {
+      "parameters": {
+        "jsCode": "const source = $('Build CRM Contact Keys').item.json;\nconst rows = $json.rows || $json.body?.rows || [];\nconst existingById = new Map();\n\nfor (const row of rows) {\n  if (row?.doc && !row.error) {\n    existingById.set(row.id, row.doc);\n  }\n}\n\nconst docs = [];\nconst now = new Date().toISOString();\n\nfor (const incoming of (source.contact_candidates || [])) {\n  const existing = existingById.get(incoming._id);\n\n  const doc = {\n    ...(existing || {}),\n    ...incoming,\n\n    type: 'contact',\n    company_id: incoming.company_id,\n\n    name: incoming.name || existing?.name || '',\n    normalized_name: incoming.normalized_name || existing?.normalized_name || '',\n    job_title: incoming.job_title || existing?.job_title || '',\n    role_category: incoming.role_category || existing?.role_category || '',\n\n    email: incoming.email || existing?.email || null,\n    email_status: incoming.email ? 'published' : (existing?.email_status || 'unknown'),\n\n    contact_score: Math.max(\n      Number(existing?.contact_score || 0),\n      Number(incoming.contact_score || 0)\n    ),\n\n    is_primary: Boolean(incoming.is_primary || existing?.is_primary),\n\n    first_seen_at: existing?.first_seen_at || now,\n    last_seen_at: now,\n    source: incoming.source || existing?.source || 'deepseek_or_public_site'\n  };\n\n  if (existing?._rev) {\n    doc._rev = existing._rev;\n  }\n\n  docs.push(doc);\n}\n\nreturn [{\n  json: {\n    company_id: source.company_id,\n    contact_docs: docs,\n    contact_count: docs.length,\n    primary_contact_id: docs.find(d => d.is_primary)?._id || null\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5728,
+        2912
+      ],
+      "id": "d8dec714-f72d-43e9-9867-e467521126df",
+      "name": "Build Contact Bulk Upsert"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ Number($json.contact_count || 0) }}",
+                    "rightValue": 0,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gt"
+                    },
+                    "id": "9d50193e-1a2d-4d9c-ba66-ba5df1be93a9"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "YES"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "b7af61bd-d039-49a6-a434-a0c73139b36b",
+                    "leftValue": "={{ Number($json.contact_count || 0) }}",
+                    "rightValue": 0,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "NO"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        5952,
+        2912
+      ],
+      "id": "7bd10068-9aea-4166-ab20-eb937b4f326e",
+      "name": "Has Contact Docs?"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ (($env.COUCHDB_BASE_URL || 'https://<COUCHDB_PROXY_DOMAIN>').replace(/\\/$/, '')) + '/' + ($env.CRM_DB || '<CRM_DB_NAME>') + '/_bulk_docs' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { docs: $json.contact_docs } }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          },
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        6192,
+        2816
+      ],
+      "id": "b7742a6b-5d64-4b00-a166-e37d5c5de21d",
+      "name": "BULK Upsert Contacts"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    contact_count: 0,\n    primary_contact_id: null,\n    note: 'No public contact emails or named contacts were found.'\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6192,
+        3024
+      ],
+      "id": "3bb0840b-7679-497d-bd4a-b9eae100955d",
+      "name": "Pass No Contacts"
+    },
+    {
+      "parameters": {
+        "jsCode": "const lead = $('Normalize CRM Lead').item.json;\nconst company = $('GET Saved CRM Company').item.json;\nconst now = new Date().toISOString();\n\nfunction simpleHash(s) {\n  let h = 2166136261;\n  for (let i = 0; i < s.length; i++) {\n    h ^= s.charCodeAt(i);\n    h = Math.imul(h, 16777619);\n  }\n  return (h >>> 0).toString(36);\n}\n\nconst randomPart = Math.random().toString(36).slice(2, 8);\nconst eventKey = simpleHash(`${lead.crm_run_id}|${lead.company_id}|${lead.discovery_source}|${lead.discovery_query}|${now}|${randomPart}`);\n\nreturn [{\n  json: {\n    _id: `discovery:${lead.crm_run_id}:${eventKey}`,\n    type: 'discovery_event',\n\n    run_id: lead.crm_run_id,\n    company_id: lead.company_id,\n    company_rev_at_discovery: company._rev || null,\n\n    engine: 'outscraper_crawl4ai_deepseek',\n    source: lead.discovery_source || '',\n    query: lead.discovery_query || '',\n\n    persona: lead.persona || '',\n    priority: lead.priority || '',\n    icp_score: Number(lead.icp_score || 0),\n    intent_score: Number(lead.intent_score || 0),\n\n    contacts_found_count: (lead.contact_candidates || []).length,\n    public_emails_found: (lead.contact_candidates || []).filter(c => c.email).map(c => c.email),\n\n    evidence: lead.evidence || [],\n    intent_signals: lead.intent_signals || [],\n\n    discovered_at: now,\n    created_at: now\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6448,
+        2912
+      ],
+      "id": "a0a7db75-1836-4df6-abd6-62592051c952",
+      "name": "Build Discovery Event"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ (($env.COUCHDB_BASE_URL || 'https://<COUCHDB_PROXY_DOMAIN>').replace(/\\/$/, '')) + '/' + ($env.CRM_DB || '<CRM_DB_NAME>') + '/' + encodeURIComponent($json._id) }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          },
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        6672,
+        2912
+      ],
+      "id": "3d15161d-f251-4ba2-91d9-9603c6c544ca",
+      "name": "PUT Discovery Event"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const lead = (() => {\n  try {\n    return $('Normalize CRM Lead').item.json || {};\n  } catch (e) {\n    return $json || {};\n  }\n})();\n\nconst company = (() => {\n  try {\n    return $('GET Saved CRM Company').item.json || {};\n  } catch (e) {\n    return {};\n  }\n})();\n\nconst now = new Date();\n\nlet outreach_eligibility = 'ready';\nlet hold_reason = '';\nlet block_reason = '';\n\nfunction cleanString(value) {\n  return String(value ?? '').trim();\n}\n\nfunction sortContactsByQuality(contacts) {\n  return [...contacts].sort((a, b) => {\n    const scoreA = Number(a.contact_score || 0);\n    const scoreB = Number(b.contact_score || 0);\n\n    if (scoreB !== scoreA) return scoreB - scoreA;\n\n    const aGeneric = /^(info|hello|contact|admin|office|support)@/i.test(a.email || '');\n    const bGeneric = /^(info|hello|contact|admin|office|support)@/i.test(b.email || '');\n\n    if (aGeneric !== bGeneric) return aGeneric ? 1 : -1;\n\n    return String(a.email || '').localeCompare(String(b.email || ''));\n  });\n}\n\nconst publicEmailContacts = sortContactsByQuality(\n  (lead.contact_candidates || []).filter(c => cleanString(c.email))\n);\n\nconst leadPhone = cleanString(lead.phone);\n\nconst instagram_url =\n  (lead.instagram_links || [])[0] ||\n  lead.social_links?.instagram?.[0] ||\n  lead.contact_hints?.instagram_links?.[0] ||\n  '';\n\n// Rank the best available contact channel. Email is most direct, then\n// phone, then a social link (still contactable via DM). Fixes the old\n// behavior where phone/Instagram-only leads were silently held forever\n// because only email was checked here.\nlet contact_channel = 'none';\nlet contact_value = '';\n\nif (publicEmailContacts.length) {\n  contact_channel = 'email';\n  contact_value = publicEmailContacts[0].email || '';\n} else if (leadPhone) {\n  contact_channel = 'phone';\n  contact_value = leadPhone;\n} else if (instagram_url) {\n  contact_channel = 'instagram';\n  contact_value = instagram_url;\n}\n\nconst hasAnyContactChannel = contact_channel !== 'none';\n\nif (company.do_not_contact) {\n  outreach_eligibility = 'block';\n  block_reason = 'Company is marked do_not_contact';\n} else if (String(lead.priority || '').toUpperCase() === 'REJECT') {\n  outreach_eligibility = 'block';\n  block_reason = 'Lead priority is REJECT';\n} else if (company.active_contact_id) {\n  outreach_eligibility = 'hold';\n  hold_reason = 'Company already has an active contact';\n} else if (\n  company.next_contact_allowed_at &&\n  new Date(company.next_contact_allowed_at) > now\n) {\n  outreach_eligibility = 'hold';\n  hold_reason = `Cooldown active until ${company.next_contact_allowed_at}`;\n} else if (!hasAnyContactChannel) {\n  outreach_eligibility = 'hold';\n  hold_reason = 'No contact channel found (no email, phone, or social link) - website may still be worth manual review';\n} else if (!['S', 'A', 'B'].includes(String(lead.priority || '').toUpperCase())) {\n  outreach_eligibility = 'hold';\n  hold_reason = 'Lead priority is below B';\n}\n\nconst primary =\n  publicEmailContacts[0] ||\n  (lead.contact_candidates || [])[0] ||\n  null;\n\nfunction buildSheetRow(contact) {\n  return {\n    company_name: lead.company_name || '',\n    website: lead.website || '',\n    domain: lead.canonical_domain || lead.domain || '',\n    country: lead.business_country || '',\n    priority: lead.priority || '',\n    persona: lead.persona || '',\n    icp_score: lead.icp_score ?? '',\n    intent_score: lead.intent_score ?? '',\n\n    contact_name:\n      contact?.name ||\n      contact?.email ||\n      '',\n\n    contact_title:\n      contact?.job_title ||\n      contact?.title ||\n      contact?.role ||\n      '',\n\n    contact_email:\n      contact?.email ||\n      '',\n\n    phone: lead.phone || '',\n    instagram_url,\n\n    contact_channel,\n    contact_value,\n\n    personalized_first_line: lead.personalized_first_line || '',\n    reason: lead.reason || '',\n    discovery_source: lead.discovery_source || lead.source || '',\n    discovery_query: lead.discovery_query || lead.source_query || '',\n    run_id: lead.crm_run_id || lead.run_id || '',\n    crm_company_id: lead.company_id || '',\n    crm_contact_id: contact?._id || '',\n\n    outreach_eligibility,\n    hold_reason,\n    block_reason,\n    ready_at: now.toISOString()\n  };\n}\n\nconst sheet_rows = publicEmailContacts.length\n  ? publicEmailContacts.map(contact => buildSheetRow(contact))\n  : [buildSheetRow(primary)];\n\nconst sheet_row = sheet_rows[0];\n\nreturn {\n  json: {\n    ...lead,\n\n    outreach_eligibility,\n    hold_reason,\n    block_reason,\n\n    contact_channel,\n    contact_value,\n\n    selected_contact_id: primary?._id || null,\n    selected_contact_name: primary?.name || primary?.email || '',\n    selected_contact_title: primary?.job_title || primary?.title || primary?.role || '',\n    selected_contact_email: primary?.email || '',\n\n    sheet_rows,\n    sheet_row,\n\n    contact_count_for_sheet: sheet_rows.filter(row => row.contact_email).length\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6880,
+        2912
+      ],
+      "id": "0b55c620-7016-49a1-a9b8-30d6e7a837a0",
+      "name": "Outreach Eligibility Guard"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.outreach_eligibility }}",
+                    "rightValue": "ready",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "27ea46c0-4396-4429-99dc-375e703ec4a0"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "READY"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.outreach_eligibility }}",
+                    "rightValue": "hold",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "aab2dd0f-f9aa-43c7-9f63-b0796f607577"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "HOLD"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.outreach_eligibility }}",
+                    "rightValue": "block",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "a741bbde-dae0-4c96-a782-c2a51c623963"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "BLOCK"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        7104,
+        2912
+      ],
+      "id": "477d5256-eb7a-4a9f-9b82-ad3c489a84ab",
+      "name": "Eligibility Result"
+    },
+    {
+      "parameters": {
+        "jsCode": "const out = [];\nconst seenDomains = new Set();\n\nfor (const item of $input.all()) {\n  const j = item.json || {};\n\n  const row =\n    j.sheet_row ||\n    (Array.isArray(j.sheet_rows) ? j.sheet_rows[0] : null) ||\n    j;\n\n  const domain = String(\n    row.domain ||\n    row.canonical_domain ||\n    j.domain ||\n    j.canonical_domain ||\n    ''\n  ).toLowerCase().trim();\n\n  if (!domain) continue;\n  if (seenDomains.has(domain)) continue;\n\n  seenDomains.add(domain);\n\n  out.push({\n    json: row\n  });\n}\n\nreturn out;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7344,
+        2768
+      ],
+      "id": "04bf3f57-db64-4799-8fb9-11978e7d7b84",
+      "name": "Ready For Google Sheets"
+    },
+    {
+      "parameters": {
+        "jsCode": "const j = $json;\n\nreturn [{\n  json: {\n    company_name: j.company_name || '',\n    website: j.website || '',\n    domain: j.canonical_domain || j.domain || '',\n    country: j.business_country || '',\n    persona: j.persona || '',\n    priority: j.priority || '',\n    icp_score: j.icp_score ?? '',\n    intent_score: j.intent_score ?? '',\n\n    contact_channel: j.contact_channel || 'none',\n    contact_value: j.contact_value || '',\n    phone: j.phone || '',\n    instagram_url:\n      (j.instagram_links || [])[0] ||\n      j.social_links?.instagram?.[0] ||\n      j.contact_hints?.instagram_links?.[0] ||\n      '',\n\n    personalized_first_line: j.personalized_first_line || '',\n    reason: j.reason || '',\n\n    outreach_eligibility: j.outreach_eligibility || '',\n    hold_reason: j.hold_reason || '',\n\n    crm_company_id: j.company_id || '',\n    run_id: j.crm_run_id || ''\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7344,
+        2912
+      ],
+      "id": "73a9517e-7434-48cb-a6dc-087726cbd2c6",
+      "name": "Held CRM Lead Output"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    company_name: $json.company_name,\n    domain: $json.canonical_domain,\n    outreach_eligibility: $json.outreach_eligibility,\n    block_reason: $json.block_reason,\n    crm_company_id: $json.company_id,\n    run_id: $json.crm_run_id\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7344,
+        3088
+      ],
+      "id": "45304c89-858d-4c70-9c3b-2b64726bcd9a",
+      "name": "Blocked CRM Lead Output"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all().map(i => i.json || {});\nconst ready = items.filter(j => j.outreach_eligibility === 'ready');\nconst hold = items.filter(j => j.outreach_eligibility === 'hold');\nconst block = items.filter(j => j.outreach_eligibility === 'block');\nconst runId = items[0]?.crm_run_id || items[0]?.run_id || (() => { try { return $('Create Run Context').first().json.run_id; } catch(e) { return 'unknown'; } })();\nlet budget = {};\nlet querySource = '';\ntry {\n  budget = $('Search Strategy Config').first().json.strategy_config?.budget || {};\n  querySource = $('Search Strategy Config').first().json.query_source || '';\n} catch(e) {}\nlet prospectCount = null;\ntry { prospectCount = $('Merge Prospect Docs').first().json.prospect_count; } catch(e) {}\nfunction line(j) {\n  const contact = j.selected_contact_email || j.contact_email || '';\n  const p = j.priority || '';\n  const reason = j.hold_reason || j.block_reason || j.reason || '';\n  return `• ${j.company_name || j.domain || 'Unknown'} (${j.canonical_domain || j.domain || ''}) P:${p} Contact:${contact || 'none'} — ${reason || 'n/a'}`;\n}\nfunction section(title, arr, empty) {\n  if (!arr.length) return `${title}: ${empty}`;\n  return `${title}: ${arr.length}\\n${arr.slice(0, 12).map(line).join('\\n')}${arr.length > 12 ? `\\n…and ${arr.length - 12} more` : ''}`;\n}\nconst budgetLine = `Budget: ${budget.queries_per_run || '?'} queries × ${budget.outscraper_limit_per_query || '?'} places, crawl cap ${budget.new_companies_to_crawl_per_run || '?'}. Source: ${querySource || 'default'}`;\nconst prospectLine = `Prospects logged to CouchDB this run: ${prospectCount ?? 'n/a'} (every Maps result, win or lose)`;\nreturn [{ json: { content:\n`📊 Lead discovery batch complete\\nRun: ${runId}\\nFinal researched leads: ${items.length}\\nReady: ${ready.length} | Hold: ${hold.length} | Block: ${block.length}\\n${budgetLine}\\n${prospectLine}\\n\\n` +\nsection('✅ Ready for outreach / Sheet', ready, 'none') + '\\n\\n' +\nsection('⏸ Held', hold, 'none') + '\\n\\n' +\nsection('⛔ Blocked', block, 'none') +\n(ready.length ? '' : '\\n\\nNo Google Sheet append because no lead reached ready status.')\n}}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7568,
+        2768
+      ],
+      "id": "307cecf9-d90a-45f5-ba90-e4565f871a62",
+      "name": "Build Discord Batch Summary"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputItems = $input.all();\nconst ctx = inputItems[0]?.json || {};\nconst config = ctx.strategy_config || {};\nconst active = ctx.active_strategy || null;\nconst budget = config.budget || {};\n\nconst excluded = new Set((config.excluded_business_countries || []).map(s => String(s).toLowerCase()));\n\nfunction hashString(s) {\n  let h = 2166136261;\n  for (let i = 0; i < s.length; i++) {\n    h ^= s.charCodeAt(i);\n    h = Math.imul(h, 16777619);\n  }\n  return h >>> 0;\n}\n\nfunction seededShuffle(arr, seed) {\n  const a = [...arr];\n  let x = seed || 123456789;\n  for (let i = a.length - 1; i > 0; i--) {\n    x ^= x << 13;\n    x ^= x >>> 17;\n    x ^= x << 5;\n    const j = Math.abs(x) % (i + 1);\n    [a[i], a[j]] = [a[j], a[i]];\n  }\n  return a;\n}\n\nconst seed = hashString(`${ctx.run_id || ''}|${new Date().toISOString()}|${Math.random()}|${active?.strategy_id || ''}`);\nconst maxQueries = Number(active?.max_queries_per_run || budget.queries_per_run || 10);\n\nlet queryRows = [];\n\nif (active && Array.isArray(active.queries) && active.queries.length) {\n  queryRows = active.queries.map(q => ({\n    query: q.query || q.search || '',\n    region: q.region || q.market?.region || 'GB',\n    language: q.language || q.market?.language || 'en',\n    target_country: q.country || q.market?.country || q.target_country || '',\n    rationale: q.rationale || '',\n    query_strategy: `active_strategy:${active.strategy_id}`\n  })).filter(q => q.query);\n} else {\n  const markets = config.markets || [];\n  const terms = config.google_maps_terms || [];\n  const combos = [];\n\n  for (const market of markets) {\n    if (excluded.has(String(market.country || '').toLowerCase())) continue;\n    for (const term of terms) {\n      combos.push({ term, market });\n    }\n  }\n\n  queryRows = seededShuffle(combos, seed).map(({ term, market }) => ({\n    query: `${term}, ${market.country}`,\n    target_country: market.country,\n    region: market.region,\n    language: market.language,\n    rationale: 'modular rotating default',\n    query_strategy: 'modular_default_v4'\n  }));\n}\n\nreturn seededShuffle(queryRows, seed)\n  .slice(0, maxQueries)\n  .map(q => ({\n    json: {\n      run_id: ctx.run_id,\n      run_doc_id: ctx.run_doc_id,\n      run_started_at: ctx.run_started_at,\n      query: q.query,\n      target_country: q.target_country || '',\n      region: q.region || 'GB',\n      language: q.language || 'en',\n      query_strategy: q.query_strategy || 'unknown',\n      strategy_id: active?.strategy_id || '',\n      active_strategy_name: active?.strategy_name || '',\n      search_budget: budget\n    }\n  }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        112,
+        3088
+      ],
+      "id": "0f9ee07d-6356-4279-b698-8393c56584da",
+      "name": "Generate Discovery Queries1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.outscraper.cloud/google-maps-search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  query: [$json.query],\n  limit: 20,\n  async: false,\n  dropDuplicates: true,\n  region: $json.region,\n  language: $json.language\n}) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        352,
+        3088
+      ],
+      "id": "cf0b5660-465e-4d4f-a7f4-e8cc5d61402d",
+      "name": "Outscraper Google Maps1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputItems = $input.all();\nlet queryItems = [];\n\ntry {\n  queryItems = $('Generate Discovery Queries1').all().map(item => item.json || {});\n} catch (e) {\n  queryItems = [];\n}\n\nconst rows = [];\nconst seenPlaceOrDomain = new Set();\n\nfunction flatten(v) {\n  if (v == null) return [];\n  if (!Array.isArray(v)) return [v];\n  return v.flat(Infinity);\n}\n\nfunction unwrapResponse(j) {\n  if (j?.body && typeof j.body === 'object') return j.body;\n  return j || {};\n}\n\nfor (let itemIndex = 0; itemIndex < inputItems.length; itemIndex++) {\n  const response = unwrapResponse(inputItems[itemIndex].json || {});\n  const qctx = queryItems[itemIndex] || {};\n\n  const data =\n    response.data ??\n    response.results ??\n    response.result ??\n    [];\n\n  for (const row of flatten(data)) {\n    if (!row || typeof row !== 'object') continue;\n\n    const website = row.site || row.website || row.domain || row.url || null;\n    if (!website) continue;\n\n    const dedupeKey = String(row.place_id || website).trim().toLowerCase();\n    if (!dedupeKey || seenPlaceOrDomain.has(dedupeKey)) continue;\n    seenPlaceOrDomain.add(dedupeKey);\n\n    rows.push({\n      json: {\n        run_id: qctx.run_id || row.run_id || '',\n        run_doc_id: qctx.run_doc_id || row.run_doc_id || '',\n        run_started_at: qctx.run_started_at || '',\n\n        company_name: row.name || row.title || '',\n        website,\n\n        source: 'outscraper_maps',\n        source_query: row.query || qctx.query || '',\n        discovery_source: 'outscraper_maps',\n        discovery_query: row.query || qctx.query || '',\n        target_country: qctx.target_country || '',\n        region: qctx.region || '',\n        language: qctx.language || '',\n\n        business_country: row.country || row.country_code || qctx.target_country || '',\n        full_address: row.full_address || row.address || '',\n        category: row.category || row.type || '',\n        maps_type: row.type || '',\n        maps_subtypes: row.subtypes || '',\n        phone: row.phone || row.phone_number || '',\n\n    booking_appointment_link:\n  row.booking_appointment_link || '',\n\norder_links:\n  Array.isArray(row.order_links)\n    ? row.order_links\n    : [],\n        place_id: row.place_id || '',\n        rating: row.rating ?? null,\n        reviews: row.reviews ?? row.reviews_count ?? null\n      }\n    });\n  }\n}\n\nreturn rows;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        592,
+        3088
+      ],
+      "id": "514a6dae-6607-436a-935e-3f8f33c33d93",
+      "name": "Flatten Maps Results1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const EXCLUDED = [\n  'japan',\n  'indonesia',\n  'south korea',\n  'republic of korea',\n  'thailand',\n  'maldives',\n  'spain'\n];\n\nfunction normalizeWebsite(value) {\n  if (!value) return null;\n\n  let original = String(value)\n    .trim()\n    .replace(/^['\"]|['\"]$/g, '')\n    .trim();\n\n  if (!original) return null;\n\n  if (/^(mailto:|tel:|javascript:)/i.test(original)) return null;\n\n  // Remove URL fragment only.\n  let website = original.split('#')[0].trim();\n\n  // Support protocol-relative URLs.\n  if (website.startsWith('//')) {\n    website = `https:${website}`;\n  }\n\n  // Only add HTTPS when no protocol exists.\n  if (!/^[a-z][a-z0-9+.-]*:\\/\\//i.test(website)) {\n    website = `https://${website}`;\n  }\n\n  // Only crawl normal web URLs.\n  if (!/^https?:\\/\\//i.test(website)) return null;\n\n  // Manual hostname extraction, avoiding new URL().\n  let withoutProtocol = website.replace(/^[a-z][a-z0-9+.-]*:\\/\\//i, '');\n  let host = withoutProtocol.split(/[/?#]/)[0];\n\n  if (!host) return null;\n\n  // Remove userinfo and port if present.\n  host = host.replace(/^.*@/, '').replace(/:\\d+$/, '');\n\n  const domain = host\n    .toLowerCase()\n    .replace(/^www\\./, '')\n    .replace(/\\.$/, '')\n    .trim();\n\n  if (!domain || !domain.includes('.')) return null;\n  if (domain.startsWith('.') || domain.endsWith('.') || domain.includes('..')) return null;\n  if (!/^[a-z0-9.-]+$/.test(domain)) return null;\n\n  return {\n    website,\n    original_website: original,\n    domain\n  };\n}\n\nconst incomingItems = $input.all();\nconst sourceRows = [];\n\nfor (const item of incomingItems) {\n  const value = item.json;\n\n  if (Array.isArray(value)) {\n    sourceRows.push(...value);\n    continue;\n  }\n\n  if (Array.isArray(value?.data)) {\n    sourceRows.push(...value.data);\n    continue;\n  }\n\n  if (Array.isArray(value?.results)) {\n    sourceRows.push(...value.results);\n    continue;\n  }\n\n  if (Array.isArray(value?.items)) {\n    sourceRows.push(...value.items);\n    continue;\n  }\n\n  if (value && typeof value === 'object') {\n    sourceRows.push(value);\n  }\n}\n\nconst seen = new Set();\nconst out = [];\n\nconst stats = {\n  incoming_n8n_items: incomingItems.length,\n  source_rows: sourceRows.length,\n  missing_website: 0,\n  invalid_website: 0,\n  duplicate_domain: 0,\n  excluded_country: 0,\n  accepted_before_cap: 0\n};\n\nfor (const row of sourceRows) {\n  const j = row || {};\n\n  if (!j.website) {\n    stats.missing_website++;\n    continue;\n  }\n\n  const normalized = normalizeWebsite(j.website);\n\n  if (!normalized) {\n    stats.invalid_website++;\n    continue;\n  }\n\n  if (seen.has(normalized.domain)) {\n    stats.duplicate_domain++;\n    continue;\n  }\n\n  const locationText = [\n    j.business_country,\n    j.full_address\n  ]\n    .filter(Boolean)\n    .join(' ')\n    .toLowerCase();\n\n  if (EXCLUDED.some(country => locationText.includes(country))) {\n    stats.excluded_country++;\n    continue;\n  }\n\n  seen.add(normalized.domain);\n\n  out.push({\n    json: {\n      ...j,\n      website: normalized.website,\n      original_website: normalized.original_website,\n      domain: normalized.domain\n    }\n  });\n}\n\nstats.accepted_before_cap = out.length;\n\nlet RAW_DOMAIN_POOL_PER_RUN = 120;\ntry {\n  const budgetCfg = $('Search Strategy Config').first().json.strategy_config?.budget;\n  if (budgetCfg?.raw_domain_pool_per_run) RAW_DOMAIN_POOL_PER_RUN = Number(budgetCfg.raw_domain_pool_per_run);\n} catch (e) {}\nconst finalOutput = out.slice(0, RAW_DOMAIN_POOL_PER_RUN);\n\nif (!finalOutput.length) {\n  return [\n    {\n      json: {\n        pipeline_debug_error: true,\n        message: 'Dedupe node produced zero valid companies.',\n        stats,\n        first_source_row: sourceRows[0] || null,\n        first_website_seen: sourceRows[0]?.website || null,\n        parser_note: 'Manual parser used. If invalid_website is still high, website values are not plain strings.'\n      }\n    }\n  ];\n}\n\nreturn finalOutput.map((item, index) => ({\n  ...item,\n  pairedItem: {\n    item: Math.min(index, Math.max(incomingItems.length - 1, 0))\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        832,
+        3088
+      ],
+      "id": "6b852da8-de32-466e-bba6-b5097f854447",
+      "name": "Dedupe & Hard Country Filter1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ ($env.CRAWL4AI_BASE_URL || 'http://<CRAWL4AI_HOST>:<CRAWL4AI_PORT>').replace(/\\/$/, '') + '/crawl' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  urls: [$json.website]\n}) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1072,
+        3088
+      ],
+      "id": "603d56b6-ba0f-499b-bc52-641c3627ab3d",
+      "name": "Crawl4AI Homepage1",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 3000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const crawlItems = $input.all();\n\nfunction firstResult(obj) {\n  if (Array.isArray(obj)) return obj[0] || {};\n  if (Array.isArray(obj?.results)) return obj.results[0] || {};\n  if (Array.isArray(obj?.data)) return obj.data[0] || {};\n  if (obj?.result) return Array.isArray(obj.result) ? (obj.result[0] || {}) : obj.result;\n  return obj?.data || obj || {};\n}\n\nfunction hostFromUrl(value) {\n  if (!value) return '';\n\n  let s = String(value).trim().toLowerCase();\n\n  if (s.startsWith('mailto:') || s.startsWith('tel:')) return '';\n\n  s = s.replace(/^['\"]|['\"]$/g, '').trim();\n  s = s.replace(/^[a-z][a-z0-9+.-]*:\\/\\//i, '');\n  s = s.replace(/^\\/\\//, '');\n  s = s.replace(/^.*@/, '');\n  s = s.split(/[/?#]/)[0];\n  s = s.replace(/:\\d+$/, '');\n  s = s.replace(/^www\\./, '').replace(/\\.$/, '').trim();\n\n  if (!s || !s.includes('.')) return '';\n  if (!/^[a-z0-9.-]+$/.test(s)) return '';\n\n  return s;\n}\n\nfunction normalizeLink(raw, baseDomain) {\n  if (!raw) return null;\n\n  let value = String(raw).trim();\n\n  if (!value) return null;\n\n  if (/^mailto:/i.test(value)) {\n    return value;\n  }\n\n  if (/^tel:/i.test(value)) {\n    return null;\n  }\n\n  if (/^javascript:/i.test(value)) {\n    return null;\n  }\n\n  if (value.startsWith('//')) {\n  value = 'https:' + value;\n  } else if (value.startsWith('/')) {\n  value = `https://${baseDomain}${value}`;\n  }\n\n  if (!/^https?:\\/\\//i.test(value)) {\n    return null;\n  }\n\n  value = value.split('#')[0];\n\n  return value;\n}\n\nfunction cleanEmail(value) {\n  if (!value) return '';\n\n  let e = String(value)\n    .trim()\n    .toLowerCase()\n    .replace(/^mailto:/i, '')\n    .split('?')[0]\n    .trim();\n\n  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(e)) return '';\n  if (/^(noreply|no-reply|donotreply|do-not-reply)@/i.test(e)) return '';\n\n  return e;\n}\n\nfunction extractEmailsFromText(text) {\n  const emails = new Set();\n\n  const matches =\n    String(text || '').match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}/gi) || [];\n\n  for (const raw of matches) {\n    const email = cleanEmail(raw);\n    if (email) emails.add(email);\n  }\n\n  return [...emails];\n}\n\nfunction normalizeInstagramUrl(value) {\n  if (!value) return '';\n\n  let s = String(value)\n    .trim()\n    .replace(/\\\\\\//g, '/')\n    .replace(/[)\\],.'\"]+$/g, '')\n    .replace(/^http:\\/\\//i, 'https://');\n\n  if (!/^https?:\\/\\/(www\\.)?instagram\\.com\\//i.test(s)) {\n    return '';\n  }\n\n  const lower = s.toLowerCase();\n\n  // Skip posts/reels/stories; keep profile URLs.\n  if (/instagram\\.com\\/(p|reel|stories|explore|accounts)\\//i.test(lower)) {\n    return '';\n  }\n\n  s = s.split('?')[0].split('#')[0];\n\n  if (!s.endsWith('/')) s += '/';\n\n  return s;\n}\n\nfunction extractInstagramFromText(text) {\n  const out = new Set();\n\n  const safeText = String(text || '').replace(/\\\\\\//g, '/');\n\n  const urlMatches =\n    safeText.match(/https?:\\/\\/(?:www\\.)?instagram\\.com\\/[A-Za-z0-9_.]+\\/?/gi) || [];\n\n  for (const raw of urlMatches) {\n    const clean = normalizeInstagramUrl(raw);\n    if (clean) out.add(clean);\n  }\n\n  const handleRegex = /\\b(?:instagram|ig)\\s*[:：]\\s*@([a-z0-9._]{2,30})/gi;\n  let match;\n\n  while ((match = handleRegex.exec(safeText)) !== null) {\n    out.add(`https://www.instagram.com/${match[1].toLowerCase()}/`);\n  }\n\n  return [...out];\n}\n\nfunction collectCandidateLeads() {\n  const leads = [];\n\n  // Preferred source after the pre-crawl CouchDB skip.\n  try {\n    leads.push(...$('Filter Known Companies Before Crawl').all().map(item => item.json));\n  } catch (e) {}\n\n  // Fallback if that node name does not exist or is bypassed.\n  try {\n    leads.push(...$('Dedupe & Hard Country Filter1').all().map(item => item.json));\n  } catch (e) {}\n\n  // Fallback from the batched lookup prep node.\n  try {\n    const prepItems = $('Prepare Known Company Lookup').all();\n    for (const item of prepItems) {\n      if (Array.isArray(item.json?.leads)) {\n        leads.push(...item.json.leads);\n      }\n    }\n  } catch (e) {}\n\n  const seen = new Set();\n  const deduped = [];\n\n  for (const lead of leads) {\n    const domain =\n      lead.domain ||\n      lead.canonical_domain ||\n      hostFromUrl(lead.website);\n\n    if (!domain) continue;\n\n    const key = String(domain).toLowerCase();\n\n    if (seen.has(key)) continue;\n    seen.add(key);\n\n    deduped.push({\n      ...lead,\n      domain: key,\n      canonical_domain: lead.canonical_domain || key\n    });\n  }\n\n  return deduped;\n}\n\nfunction findLeadForCrawl(candidateLeads, crawledUrl, index) {\n  const crawledHost = hostFromUrl(crawledUrl);\n\n  if (crawledHost) {\n    const exact = candidateLeads.find(lead => {\n      const leadHost =\n        lead.domain ||\n        lead.canonical_domain ||\n        hostFromUrl(lead.website);\n\n      return String(leadHost || '').toLowerCase() === crawledHost;\n    });\n\n    if (exact) return exact;\n  }\n\n  return candidateLeads[index] || candidateLeads[0] || {};\n}\n\nfunction extractRawLinksFromHtml(html) {\n  const out = [];\n  const text = String(html || '');\n  const hrefRegex = /\\bhref\\s*=\\s*[\"']([^\"']+)[\"']/gi;\n\n  let match;\n\n  while ((match = hrefRegex.exec(text)) !== null) {\n    out.push(match[1]);\n  }\n\n  return out;\n}\n\nconst candidateLeads = collectCandidateLeads();\nconst output = [];\n\nfor (let index = 0; index < crawlItems.length; index++) {\n  const r = crawlItems[index].json || {};\n\n  if (\n    r.error ||\n    Number(r.statusCode || 0) >= 400 ||\n    r.body?.error\n  ) {\n    continue;\n  }\n\n  const crawlPayload =\n    r.body && typeof r.body === 'object'\n      ? r.body\n      : r;\n\n  const x = firstResult(crawlPayload);\n\n  const crawledUrl =\n    x?.url ||\n    x?.data?.url ||\n    r?.url ||\n    '';\n\n  const lead = findLeadForCrawl(candidateLeads, crawledUrl, index);\n\n  let markdown =\n    x?.markdown?.raw_markdown ??\n    x?.markdown?.fit_markdown ??\n    x?.markdown ??\n    x?.data?.markdown ??\n    '';\n\n  if (typeof markdown !== 'string') {\n    markdown = JSON.stringify(markdown);\n  }\n\n  const html =\n    x?.html ||\n    x?.data?.html ||\n    r?.html ||\n    '';\n\n  const textForExtraction = [\n    markdown,\n    String(html || '').slice(0, 500000)\n  ].join('\\n');\n\n  const linksRaw = x?.links ?? x?.data?.links ?? {};\n  const rawLinks = [];\n\n  function addLink(v) {\n    if (!v) return;\n\n    if (typeof v === 'string') {\n      rawLinks.push(v);\n    } else if (typeof v === 'object') {\n      const href = v.href || v.url;\n      if (href) rawLinks.push(href);\n    }\n  }\n\n  if (Array.isArray(linksRaw)) {\n    linksRaw.forEach(addLink);\n  } else if (linksRaw && typeof linksRaw === 'object') {\n    for (const value of Object.values(linksRaw)) {\n      if (Array.isArray(value)) value.forEach(addLink);\n      else addLink(value);\n    }\n  }\n\n  rawLinks.push(...extractRawLinksFromHtml(html));\n\n  const baseDomain =\n    lead.domain ||\n    lead.canonical_domain ||\n    hostFromUrl(lead.website) ||\n    hostFromUrl(crawledUrl);\n\n  const all_links = [\n    ...new Set(\n      rawLinks\n        .map(link => normalizeLink(link, baseDomain))\n        .filter(Boolean)\n    )\n  ];\n\n  const internal_links = [];\n  const external_links = [];\n  const mailto_emails = new Set();\n\n  for (const link of all_links) {\n    if (/^mailto:/i.test(link)) {\n      const email = cleanEmail(link);\n      if (email) mailto_emails.add(email);\n      continue;\n    }\n\n    const host = hostFromUrl(link);\n\n    if (!host) continue;\n\n    if (host === baseDomain) {\n      internal_links.push(link);\n    } else {\n      external_links.push(link);\n    }\n  }\n\n  const homepage_emails = new Set([\n    ...extractEmailsFromText(textForExtraction),\n    ...mailto_emails\n  ]);\n\n  const instagram_links = new Set([\n    ...external_links.map(normalizeInstagramUrl).filter(Boolean),\n    ...extractInstagramFromText(textForExtraction)\n  ]);\n\n  const social_links = {\n    instagram: [...instagram_links]\n  };\n\n  output.push({\n    json: {\n      ...lead,\n\n      website:\n        lead.website ||\n        crawledUrl ||\n        (baseDomain ? `https://${baseDomain}` : ''),\n\n      domain:\n        lead.domain ||\n        baseDomain,\n\n      canonical_domain:\n        lead.canonical_domain ||\n        baseDomain,\n\n      crawled_url: crawledUrl,\n\n      homepage_markdown: markdown.slice(0, 12000),\n      all_links: all_links.slice(0, 500),\n      internal_links: [...new Set(internal_links)].slice(0, 250),\n      external_links: [...new Set(external_links)].slice(0, 120),\n\n      instagram_links: [...instagram_links],\n      social_links,\n\n      mailto_emails: [...mailto_emails],\n      homepage_emails: [...homepage_emails],\n      public_emails_found: [...homepage_emails]\n    }\n  });\n}\n\nreturn output;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1312,
+        3088
+      ],
+      "id": "c3f84dca-217f-4e42-917a-ad01bb0ba428",
+      "name": "Normalize Homepage Crawl1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.deepseek.com/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  model: 'deepseek-v4-flash',\n  thinking: { type: 'disabled' },\n  response_format: { type: 'json_object' },\n  max_tokens: 600,\n  messages: [\n    {\n      role: 'system',\n      content: [\n        'You are a SOFT prequalification filter for a Maldivian liveaboard charter B2B lead workflow.',\n        '',\n        'Return JSON only.',\n        '',\n        'This is NOT the final qualification step.',\n        'Your job is to decide whether this lead deserves deeper research.',\n        'Be inclusive at this stage. The final rejection happens later after internal pages are crawled.',\n        '',\n        'Allowed personas:',\n        '- scuba_instructor',\n        '- dmc',\n        '- tour_operator_travel_agency',\n        '- dive_center',\n        '- reject',\n        '',\n        'Hard reject only if the business itself is based in:',\n        'Japan, Indonesia, South Korea, Thailand, Maldives, or Spain.',\n        '',\n        'Do NOT reject a business merely because it sells trips to those destinations.',\n        'The blacklist applies to where the business is based, not destinations sold.',\n        '',\n        'Important:',\n        'Google Maps categories can be wrong or too broad.',\n        'Do not reject only because the category is \"attractions\", \"school\", \"club\", or similar.',\n        '',\n        'Pass to deep research if the homepage or links show any of:',\n        '- diving holidays',\n        '- scuba holidays',\n        '- dive travel',\n        '- dive trips',\n        '- group holidays',\n        '- overseas diving',\n        '- international diving trips',\n        '- group expeditions',\n        '- liveaboards',\n        '- dive safari',\n        '- Maldives diving holidays',\n        '- Red Sea diving holidays',\n        '- yacht diving',\n        '- diving club trips',\n        '- PADI dive centre / dive school with travel or holiday pages',\n        '- incentive travel',\n        '- MICE travel',\n        '- corporate retreats',\n        '- luxury adventure travel',\n        '- premium group travel',\n        '- yacht or island programmes',\n        '',\n        'Persona classification rules:',\n        '- A dive school, PADI centre, SSI centre, scuba centre or diving club may be classified as \"dive_center\" when it sells, promotes or organizes dive holidays, overseas trips, group trips, expeditions, liveaboards or dive travel.',\n        '- Do not reject a business merely because it is a dive school rather than an individual instructor.',\n        '- A business may qualify through international or group dive travel even when Maldives is not explicitly mentioned.',\n        '- A DMC, MICE agency, incentive travel agency, luxury adventure agency or group travel company may qualify without scuba terminology when it organizes premium groups, incentives, retreats, yachts, islands or adventure travel.',\n        '- Category data from Google Maps can be inaccurate. Website evidence is more important than the Google Maps category.',\n        '- Use reject only when the business is clearly irrelevant, in an excluded country, or has no plausible group travel, dive travel, luxury adventure, incentive, charter or international travel relevance.',\n        '- If the company is primarily a dive school, dive centre, scuba club, PADI centre or SSI centre with travel activity, prefer \"dive_center\".',\n        '- If the company is primarily a travel seller, tour operator or travel agency selling packages or destinations, use \"tour_operator_travel_agency\".',\n        '- If it is an individual instructor or identifiable person leading or arranging trips, use \"scuba_instructor\".',\n        '- If it is a destination management company, incentive agency or MICE operator, use \"dmc\".',\n        '- If uncertain but there are plausible dive, travel, holiday, group, liveaboard, luxury, incentive or charter signals, do not reject. Pass it to deep research.',\n        '',\n        'Output JSON exactly:',\n        '{',\n        '  \"persona\": \"...\",',\n        '  \"business_country\": \"...\",',\n        '  \"persona_confidence\": 0,',\n        '  \"intent_score\": 0,',\n        '  \"preliminary_icp_score\": 0,',\n        '  \"qualify_for_deep_research\": true,',\n        '  \"intent_signals\": [],',\n        '  \"reason\": \"\"',\n        '}',\n        '',\n        'Scores are 0-100.',\n        'Avoid inventing facts, but do not reject plausible commercial partners merely because direct Maldives or liveaboard language is absent.',\n        'Use only the known lead data, homepage markdown, and internal links.'\n      ].join('\\n')\n    },\n    {\n      role: 'user',\n      content:\n        'Known lead data:\\n' +\n        JSON.stringify({\n          company_name: $json.company_name,\n  website: $json.website,\n  business_country: $json.business_country,\n  category: $json.category,\n  maps_type: $json.maps_type,\n  maps_subtypes: $json.maps_subtypes,\n  domain: $json.domain\n        }) +\n        '\\n\\nHomepage markdown:\\n' +\n        String($json.homepage_markdown || '').slice(0, 8000) +\n        '\\n\\nInternal links:\\n' +\n        JSON.stringify(($json.internal_links || []).slice(0, 60))\n    }\n  ]\n} }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        3088
+      ],
+      "id": "4c1b20a7-2619-4a78-8708-3388813083a2",
+      "name": "DeepSeek Prequalify1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputItems = $input.all();\n\nconst leads = (() => {\n  try {\n    return $('Homepage Evidence Gate1').all().map(item => item.json || {});\n  } catch (e) {}\n\n  try {\n    return $('Normalize Homepage Crawl1').all().map(item => item.json || {});\n  } catch (e) {}\n\n  return [];\n})();\n\nconst out = [];\n\nconst blocked = new Set([\n  'japan',\n  'indonesia',\n  'south korea',\n  'republic of korea',\n  'thailand',\n  'maldives',\n  'spain'\n]);\n\nconst allowed = new Set([\n  'scuba_instructor',\n  'dmc',\n  'tour_operator_travel_agency',\n  'dive_center'\n]);\n\nfunction parseDeepSeek(item) {\n  const j = item.json || {};\n\n  const content =\n    j?.choices?.[0]?.message?.content ??\n    j?.message?.content ??\n    j?.content ??\n    '{}';\n\n  if (typeof content === 'object' && content !== null) {\n    return content;\n  }\n\n  let text = String(content || '').trim();\n\n  text = text\n    .replace(/^```json\\s*/i, '')\n    .replace(/^```\\s*/i, '')\n    .replace(/```$/i, '')\n    .trim();\n\n  try {\n    return JSON.parse(text);\n  } catch (e) {\n    const match = text.match(/\\{[\\s\\S]*\\}/);\n    if (!match) return null;\n\n    try {\n      return JSON.parse(match[0]);\n    } catch (e2) {\n      return null;\n    }\n  }\n}\n\nfunction normalizeCountry(value) {\n  return String(value || '')\n    .toLowerCase()\n    .replace(/\\s+/g, ' ')\n    .trim();\n}\n\nfunction isBlockedCountry(countryText) {\n  const text = normalizeCountry(countryText);\n  if (!text) return false;\n\n  return [...blocked].some(country => text.includes(country));\n}\n\nfor (let i = 0; i < inputItems.length; i++) {\n  const item = inputItems[i];\n  const parsed = parseDeepSeek(item);\n\n  const lead =\n    leads[i] ||\n    item.json?.lead ||\n    item.json?.company ||\n    item.json ||\n    {};\n\n  if (!parsed || typeof parsed !== 'object') {\n    continue;\n  }\n\n  const countryText = [\n    parsed.business_country,\n    lead.business_country,\n    lead.full_address,\n    lead.target_country\n  ]\n    .filter(Boolean)\n    .join(' ');\n\n  if (isBlockedCountry(countryText)) {\n    continue;\n  }\n\n  const persona = String(parsed.persona || '')\n    .trim()\n    .toLowerCase();\n\n  const personaAllowed = allowed.has(persona);\n\n  const intentScore = Number(parsed.intent_score || 0);\n  const preliminaryIcpScore = Number(parsed.preliminary_icp_score || 0);\n  const personaConfidence = Number(parsed.persona_confidence || 0);\n\n  const accepted =\n    parsed.qualify_for_deep_research === true &&\n    personaAllowed &&\n    intentScore >= 50 &&\n    preliminaryIcpScore >= 50 &&\n    personaConfidence >= 50;\n\n  if (!accepted) {\n    continue;\n  }\n\n  out.push({\n    json: {\n      ...lead,\n      prequal: parsed,\n      prequal_gate: {\n        passed: true,\n        mode: 'strict_v4_after_homepage_evidence_gate',\n        persona,\n        qualify_for_deep_research: parsed.qualify_for_deep_research,\n        intent_score: intentScore,\n        preliminary_icp_score: preliminaryIcpScore,\n        persona_confidence: personaConfidence,\n        reason: parsed.reason || ''\n      }\n    }\n  });\n}\n\nreturn out;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        3088
+      ],
+      "id": "86634f5a-0d70-44c4-9371-8f9ebc4359c4",
+      "name": "Parse & Gate Qualified Leads1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputItems = $input.all();\nconst out = [];\n\nconst intentWeights = [\n  ['liveaboard',100], ['live-aboard',100],\n  ['dive-safari',95], ['diving-safari',95],\n  ['dive-trip',92], ['diving-trip',92],\n  ['dive-holiday',90], ['diving-holiday',90],\n  ['scuba-travel',90], ['dive-travel',90],\n  ['yacht',88], ['charter',88],\n  ['maldives',86], ['expedition',82],\n  ['group-holiday',82], ['group-trip',80],\n  ['overseas',78], ['holiday',75],\n  ['trips',72], ['destination',68], ['destinations',68]\n];\n\nconst peopleWeights = [\n  ['contact',100], ['team',95], ['staff',95], ['people',90],\n  ['about-us',88], ['about',82], ['leadership',80],\n  ['instructor',75], ['meet',70]\n];\n\nfunction trash(url) {\n  return /(privacy|terms|cookie|login|cart|checkout|wp-admin|gift-voucher|basket|account|tag\\/|category\\/)/i.test(url);\n}\n\nfunction scoreWith(url, weights) {\n  const s = String(url || '').toLowerCase();\n  if (trash(s)) return -100;\n  let best = 0;\n  for (const [k,w] of weights) {\n    if (s.includes(k)) best = Math.max(best,w);\n  }\n  return best;\n}\n\nfunction hostFrom(value) {\n  const s = String(value || '').trim().toLowerCase();\n  const m = s.replace(/^https?:\\/\\//i, '').split(/[/?#]/)[0];\n  return m.replace(/^www\\./, '').replace(/:\\d+$/, '');\n}\n\nfunction normalizeUrl(raw, website) {\n  if (!raw) return '';\n  let s = String(raw).trim();\n  if (!s || /^(mailto:|tel:|javascript:)/i.test(s)) return '';\n\n  if (s.startsWith('//')) s = 'https:' + s;\n  else if (s.startsWith('/')) {\n    const baseHost = hostFrom(website);\n    if (!baseHost) return '';\n    s = 'https://' + baseHost + s;\n  } else if (!/^https?:\\/\\//i.test(s)) {\n    const baseHost = hostFrom(website);\n    if (!baseHost) return '';\n    s = 'https://' + baseHost + '/' + s.replace(/^\\/+/, '');\n  }\n\n  s = s.split('#')[0];\n  return s;\n}\n\nfunction uniqueTop(rows, field, limit) {\n  return [...new Map(\n    rows\n      .filter(x => Number(x[field] || 0) > 0)\n      .sort((a,b) => Number(b[field] || 0) - Number(a[field] || 0))\n      .map(x => [x.url, x])\n  ).values()].slice(0, limit);\n}\n\nlet DEEP_PAGE_CAP = 2;\ntry {\n  const budgetCfg = $('Search Strategy Config').first().json.strategy_config?.budget;\n  if (budgetCfg?.max_deep_pages_per_company) DEEP_PAGE_CAP = Number(budgetCfg.max_deep_pages_per_company);\n} catch (e) {}\nconst peopleCount = DEEP_PAGE_CAP >= 2 ? 1 : 0;\nconst intentCount = Math.max(DEEP_PAGE_CAP - peopleCount, 1);\n\nfor (const item of inputItems) {\n  const j = item.json || {};\n  const baseHost = hostFrom(j.domain || j.website);\n  const urls = [];\n\n  for (const raw of (j.internal_links || [])) {\n    const clean = normalizeUrl(raw, j.website);\n    if (!clean) continue;\n\n    const host = hostFrom(clean);\n    if (baseHost && host && host !== baseHost) continue;\n\n    urls.push({\n      url: clean,\n      intent_score: scoreWith(clean, intentWeights),\n      people_score: scoreWith(clean, peopleWeights)\n    });\n  }\n\n  const selected = [];\n  for (const row of uniqueTop(urls, 'intent_score', intentCount)) selected.push(row);\n  for (const row of uniqueTop(urls, 'people_score', peopleCount)) selected.push(row);\n\n  const deduped = [...new Map(selected.map(x => [x.url, x])).values()]\n    .slice(0, DEEP_PAGE_CAP);\n\n  out.push({\n    json: {\n      ...j,\n      deep_urls: deduped.map(x => x.url),\n      deep_url_selection: deduped,\n      budget_deep_page_cap: DEEP_PAGE_CAP\n    }\n  });\n}\n\nreturn out;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2240,
+        3088
+      ],
+      "id": "7049e47c-3de8-4e8a-9f62-324516f48843",
+      "name": "Select High-Value Internal Pages1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ ($env.CRAWL4AI_BASE_URL || 'http://<CRAWL4AI_HOST>:<CRAWL4AI_PORT>').replace(/\\/$/, '') + '/crawl' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  urls: Array.isArray($json.deep_urls) && $json.deep_urls.length\n    ? $json.deep_urls\n    : [$json.website]\n}) }}",
+        "options": {
+          "timeout": 180000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2448,
+        3088
+      ],
+      "id": "86ca079c-14e0-4827-bf3f-1b485fee62cf",
+      "name": "Crawl4AI Deep Pages1",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 3000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputItems = $input.all();\nconst leads = (() => {\n  try {\n    return $('Select High-Value Internal Pages1').all().map(item => item.json || {});\n  } catch (e) {\n    return [];\n  }\n})();\n\nfunction toArray(obj) {\n  if (Array.isArray(obj)) return obj;\n  if (Array.isArray(obj?.results)) return obj.results;\n  if (Array.isArray(obj?.data)) return obj.data;\n  if (obj?.result) return Array.isArray(obj.result) ? obj.result : [obj.result];\n  if (obj?.data && typeof obj.data === 'object') return [obj.data];\n  return [obj || {}];\n}\n\nconst out = [];\n\nfor (let i = 0; i < inputItems.length; i++) {\n  const item = inputItems[i];\n  const lead = leads[i] || item.json?.lead || item.json || {};\n\n  const r =\n    item.json?.body && typeof item.json.body === 'object'\n      ? item.json.body\n      : item.json || {};\n\n  if (item.json?.error || Number(item.json?.statusCode || 0) >= 400 || r?.error) {\n    out.push({\n      json: {\n        ...lead,\n        research_packet: {\n          lead: {\n            company_name: lead.company_name,\n            website: lead.website,\n            domain: lead.domain,\n            source: lead.source,\n            business_country_hint: lead.business_country,\n            category: lead.category,\n            phone: lead.phone\n          },\n          prequal: lead.prequal,\n          contact_hints: lead.contact_hints || {},\n          public_emails_found: lead.public_emails_found || [],\n          homepage_emails: lead.homepage_emails || [],\n          mailto_emails: lead.mailto_emails || [],\n          instagram_links: lead.instagram_links || [],\n          social_links: lead.social_links || {},\n          homepage: String(lead.homepage_markdown || '').slice(0, 9000),\n          pages: [],\n          deep_crawl_error: true\n        }\n      }\n    });\n\n    continue;\n  }\n\n  const pages = [];\n  for (const x of toArray(r)) {\n    let md = x?.markdown?.raw_markdown ?? x?.markdown?.fit_markdown ?? x?.markdown ?? x?.data?.markdown ?? '';\n    if (typeof md !== 'string') {\n      try { md = JSON.stringify(md); } catch { md = String(md || ''); }\n    }\n    pages.push({\n      url: x?.url || x?.data?.url || '',\n      markdown: md.slice(0, 7000)\n    });\n  }\n\n  const packet = {\n    lead: {\n      company_name: lead.company_name,\n      website: lead.website,\n      domain: lead.domain,\n      source: lead.source,\n      business_country_hint: lead.business_country,\n      category: lead.category,\n      phone: lead.phone\n    },\n\n    prequal: lead.prequal,\n\n    contact_hints: lead.contact_hints || {},\n    public_emails_found: lead.public_emails_found || [],\n    homepage_emails: lead.homepage_emails || [],\n    mailto_emails: lead.mailto_emails || [],\n    instagram_links: lead.instagram_links || [],\n    social_links: lead.social_links || {},\n\n    homepage: String(lead.homepage_markdown || '').slice(0, 9000),\n    pages\n  };\n\n  out.push({\n    json: {\n      ...lead,\n      research_packet: packet\n    }\n  });\n}\n\nreturn out;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2656,
+        3088
+      ],
+      "id": "bc22540e-7cca-4d0f-b7aa-3f1443df76dc",
+      "name": "Build Research Packet1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.deepseek.com/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  model: 'deepseek-v4-flash',\n  thinking: { type: 'disabled' },\n  response_format: { type: 'json_object' },\n  max_tokens: 1300,\n  messages: [\n    {\n      role: 'system',\n      content: [\n        'You are the lead research and personalization engine for a luxury Maldivian liveaboard charter.',\n        '',\n        'Allowed personas only:',\n        '1. scuba_instructor',\n        '2. dmc',\n        '3. tour_operator_travel_agency',\n        '4. dive_center',\n        '5. reject',\n        '',\n        'Hard country blacklist for the business/contact base:',\n        'Japan, Indonesia, South Korea, Thailand, Maldives, Spain.',\n        'Destinations sold are NOT the business country.',\n        '',\n        'Preference:',\n        '- already sells or organizes liveaboards',\n        '- dive safari / dive cruise',\n        '- yacht diving / diving from a yacht',\n        '- private dive charter',\n        '- international dive travel',\n        '- group dive trips',\n        '- Maldives diving/liveaboards',\n        '',\n        'Contact rule:',\n        'Only include contacts or emails that are explicitly present in the supplied website text or contact_hints.',\n        'Do not guess emails, names, or titles.',\n        'Generic published inboxes such as info@, travel@, sales@, reservations@ are acceptable when no named person is visible.',\n        '',\n        'Return strict JSON:',\n        '{',\n        '  \"company_name\": \"\",',\n        '  \"website\": \"\",',\n        '  \"business_country\": \"\",',\n        '  \"persona\": \"\",',\n        '  \"persona_confidence\": 0,',\n        '  \"icp_score\": 0,',\n        '  \"intent_score\": 0,',\n        '  \"priority\": \"S|A|B|C|REJECT\",',\n        '  \"services\": [],',\n        '  \"destinations_sold\": [],',\n        '  \"intent_signals\": [],',\n        '  \"evidence\": [{\"fact\":\"\",\"source_url\":\"\"}],',\n        '  \"contacts_found\": [{\"name\":\"\",\"title\":\"\",\"role\":\"\",\"public_email\":\"\"}],',\n        '  \"instagram_links\": [],',\n        '  \"social_links\": {},',\n        '  \"personalized_first_line\": \"\",',\n        '  \"reason\": \"\"',\n        '}',\n        '',\n        'Priority guideline:',\n        'S: strong direct liveaboard/yacht/dive-safari intent',\n        'A: strong international dive travel/group-trip intent',\n        'B: relevant persona but weaker intent',\n        'C: weak fit',\n        'REJECT: wrong persona, excluded country, or irrelevant',\n        '',\n        'Personalized first line rules:',\n        '- one sentence',\n        '- under 25 words',\n        '- sophisticated and understated',\n        '- use one specific supported fact',\n        '- no greetings/sign-offs',\n        '- never say \"I noticed\", \"I saw\", or \"I was impressed by\"',\n        '- never invent facts'\n      ].join('\\n')\n    },\n    {\n      role: 'user',\n      content:\n        'Analyze this research packet and output JSON only:\\n' +\n        JSON.stringify($json.research_packet || {})\n    }\n  ]\n} }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2960,
+        3088
+      ],
+      "id": "03bb7749-d4ed-43e0-840e-c0841fd8a969",
+      "name": "DeepSeek Full Research1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const lead = $('Extract Public Contact Hints').item.json;\n\nlet profile = {};\n\ntry {\n  profile = JSON.parse($json?.choices?.[0]?.message?.content ?? '{}');\n} catch (e) {\n  profile = {\n    priority: 'REJECT',\n    reason: `DeepSeek JSON parse failure: ${e.message}`\n  };\n}\n\nfunction uniqueStrings(values) {\n  return [...new Set(\n    (values || [])\n      .filter(v => v !== null && v !== undefined)\n      .map(v => String(v).trim())\n      .filter(Boolean)\n  )];\n}\n\nfunction cleanEmail(value) {\n  if (!value) return '';\n\n  let email = String(value)\n    .trim()\n    .toLowerCase()\n    .replace(/^mailto:/i, '')\n    .split('?')[0]\n    .trim();\n\n  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) return '';\n  if (/^(noreply|no-reply|donotreply|do-not-reply)@/i.test(email)) return '';\n\n  return email;\n}\n\nfunction uniqueEmails(values) {\n  return [...new Set(\n    (values || [])\n      .map(cleanEmail)\n      .filter(Boolean)\n  )];\n}\n\nfunction normalizeInstagramUrl(value) {\n  if (!value) return '';\n\n  let s = String(value)\n    .trim()\n    .replace(/[)\\],.'\"]+$/g, '')\n    .replace(/^http:\\/\\//i, 'https://');\n\n  if (!/^https?:\\/\\/(www\\.)?instagram\\.com\\//i.test(s)) {\n    return '';\n  }\n\n  const lower = s.toLowerCase();\n\n  // Keep profile URLs only, not posts/reels/stories.\n  if (/instagram\\.com\\/(p|reel|stories|explore|accounts)\\//i.test(lower)) {\n    return '';\n  }\n\n  s = s.split('?')[0].split('#')[0];\n\n  if (!s.endsWith('/')) s += '/';\n\n  return s;\n}\n\nfunction uniqueInstagramLinks(values) {\n  return [...new Set(\n    (values || [])\n      .map(normalizeInstagramUrl)\n      .filter(Boolean)\n  )];\n}\n\nconst blocked = new Set([\n  'japan',\n  'indonesia',\n  'south korea',\n  'republic of korea',\n  'thailand',\n  'maldives',\n  'spain'\n]);\n\nconst businessCountry = String(\n  profile.business_country ||\n  lead.business_country ||\n  ''\n).toLowerCase().trim();\n\nif (blocked.has(businessCountry)) {\n  profile.priority = 'REJECT';\n  profile.reason = 'Excluded contract territory';\n}\n\nconst profileContacts = Array.isArray(profile.contacts_found)\n  ? profile.contacts_found\n  : [];\n\nconst emailsFromProfileContacts = profileContacts\n  .map(c => c?.public_email || c?.email)\n  .filter(Boolean);\n\nconst public_emails_found = uniqueEmails([\n  ...(lead.public_emails_found || []),\n  ...(lead.homepage_emails || []),\n  ...(lead.mailto_emails || []),\n  ...(lead.contact_hints?.public_emails || []),\n  ...(profile.public_emails_found || []),\n  ...emailsFromProfileContacts\n]);\n\nconst instagram_links = uniqueInstagramLinks([\n  ...(lead.instagram_links || []),\n  ...(lead.social_links?.instagram || []),\n  ...(profile.instagram_links || []),\n  ...(profile.social_links?.instagram || [])\n]);\n\nconst social_links = {\n  ...(lead.social_links || {}),\n  ...(profile.social_links || {}),\n  instagram: instagram_links\n};\n\nconst contact_hints = {\n  ...(lead.contact_hints || {}),\n  public_emails: public_emails_found,\n  instagram_links\n};\n\nreturn [\n  {\n    json: {\n      run_id: lead.run_id,\n      run_doc_id: lead.run_doc_id,\n      run_started_at: lead.run_started_at,\n\n      domain: lead.domain,\n      discovery_source: lead.source,\n      discovery_query: lead.source_query,\n\n      company_name: profile.company_name || lead.company_name,\n      website: profile.website || lead.website,\n      business_country: profile.business_country || lead.business_country,\n\n      persona: profile.persona || lead.prequal?.persona || '',\n      persona_confidence: profile.persona_confidence ?? null,\n\n      icp_score: profile.icp_score ?? null,\n      intent_score: profile.intent_score ?? null,\n      priority: profile.priority || 'REJECT',\n\n      services: profile.services || [],\n      destinations_sold: profile.destinations_sold || [],\n      intent_signals: profile.intent_signals || [],\n      evidence: profile.evidence || [],\n\n      contacts_found: profileContacts,\n\n      // Deterministic contact/social data preserved from regex + crawl.\n      public_emails_found,\n      homepage_emails: uniqueEmails(lead.homepage_emails || []),\n      mailto_emails: uniqueEmails(lead.mailto_emails || []),\n      instagram_links,\n      social_links,\n      contact_hints,\n\n      personalized_first_line: profile.personalized_first_line || '',\n      reason: profile.reason || '',\n      phone: lead.phone || ''\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3200,
+        3088
+      ],
+      "id": "57f0c1c9-5e65-4c3e-809e-a138bca7228c",
+      "name": "Final Lead Record1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        2656
+      ],
+      "id": "2b36f539-b99a-41c7-83ac-ce2d22887afb",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "jsCode": "function canonicalDomain(value) {\n  if (!value) return '';\n\n  let s = String(value).trim().toLowerCase();\n\n  s = s.replace(/^['\"]|['\"]$/g, '').trim();\n  s = s.replace(/^[a-z][a-z0-9+.-]*:\\/\\//i, '');\n  s = s.replace(/^\\/\\//, '');\n  s = s.replace(/^.*@/, '');\n  s = s.split(/[/?#]/)[0];\n  s = s.replace(/:\\d+$/, '');\n  s = s.replace(/^www\\./, '').replace(/\\.$/, '').trim();\n\n  if (!s || !s.includes('.')) return '';\n  if (!/^[a-z0-9.-]+$/.test(s)) return '';\n\n  return s;\n}\n\nconst leads = [];\n\nfor (const item of $input.all()) {\n  const j = item.json || {};\n  const domain = canonicalDomain(j.domain || j.website);\n\n  if (!domain) continue;\n\n  leads.push({\n    ...j,\n    domain,\n    canonical_domain: domain,\n    company_id: `company:${domain}`\n  });\n}\n\nreturn [\n  {\n    json: {\n      keys: leads.map(l => l.company_id),\n      leads\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        3552
+      ],
+      "id": "e8accdfc-e873-4577-9249-a47029db94be",
+      "name": "Prepare Known Company Lookup"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ (($env.COUCHDB_BASE_URL || 'https://<COUCHDB_PROXY_DOMAIN>').replace(/\\/$/, '')) + '/' + ($env.CRM_DB || '<CRM_DB_NAME>') + '/_all_docs?include_docs=true' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { keys: $json.keys } }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        464,
+        3552
+      ],
+      "id": "1b0753d8-d428-4670-8c5a-97bed0b70fa1",
+      "name": "CouchDB _all_docs Known Company Lookup"
+    },
+    {
+      "parameters": {
+        "jsCode": "const prep = $('Prepare Known Company Lookup').first().json;\n\nconst leads = prep.leads || [];\nconst rows =\n  $json.rows ||\n  $json.body?.rows ||\n  [];\n\n// 0 = skip all existing companies before expensive Crawl4AI/DeepSeek.\n// Later you can set this to 30 or 60 if you want to refresh old companies.\nconst REFRESH_EXISTING_AFTER_DAYS = 0;\n\nconst rowsByKey = new Map();\n\nfor (const row of rows) {\n  rowsByKey.set(row.key || row.id, row);\n}\n\nconst now = Date.now();\nconst out = [];\n\nfor (const lead of leads) {\n  const row = rowsByKey.get(lead.company_id);\n\n  const exists =\n    row &&\n    row.doc &&\n    !row.error;\n\n  if (!exists) {\n    out.push({\n      json: {\n        ...lead,\n        crm_preflight_status: 'new_company'\n      }\n    });\n    continue;\n  }\n\n  if (REFRESH_EXISTING_AFTER_DAYS > 0) {\n    const lastSeen = row.doc.last_seen_at || row.doc.first_seen_at || null;\n\n    if (lastSeen) {\n      const ageDays =\n        (now - new Date(lastSeen).getTime()) / 86400000;\n\n      if (ageDays >= REFRESH_EXISTING_AFTER_DAYS) {\n        out.push({\n          json: {\n            ...lead,\n            crm_preflight_status: 'existing_but_stale',\n            existing_company_rev: row.doc._rev,\n            existing_last_seen_at: lastSeen\n          }\n        });\n      }\n    }\n  }\n\n  // Otherwise skip known company before expensive crawl/DeepSeek.\n}\n\n// SINGLE SOURCE OF TRUTH for how many companies get crawled/DeepSeek'd\n// this run. Pulled from Search Strategy Config so the sticky-note budget\n// and the actual enforced cap can never drift apart again.\nlet CRAWL_CAP = 15;\ntry {\n  const budgetCfg = $('Search Strategy Config').first().json.strategy_config?.budget;\n  if (budgetCfg?.new_companies_to_crawl_per_run) CRAWL_CAP = Number(budgetCfg.new_companies_to_crawl_per_run);\n} catch (e) {}\n\nreturn out.slice(0, CRAWL_CAP);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        656,
+        3552
+      ],
+      "id": "b8eb75db-1342-4c0e-a7e4-1f9145258789",
+      "name": "Filter Known Companies Before Crawl"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const row = [\n  $json.company_name,\n  $json.website,\n  $json.domain,\n  $json.country,\n  $json.priority,\n  $json.persona,\n  $json.icp_score,\n  $json.intent_score,\n  $json.contact_name,\n  $json.contact_title,\n  $json.contact_email,\n  $json.phone,\n  $json.instagram_url,\n  $json.personalized_first_line,\n  $json.reason,\n  $json.discovery_source,\n  $json.discovery_query,\n  $json.run_id,\n  $json.crm_company_id,\n  $json.crm_contact_id,\n  $json.outreach_eligibility,\n  $json.hold_reason,\n  $json.block_reason,\n  $json.ready_at\n];\n\nconst values = row.map(value => ({\n  userEnteredValue: {\n    stringValue: String(value ?? '')\n  }\n}));\n\nreturn {\n  json: {\n    ...$json,\n    sheet_batch_update_body: {\n      requests: [\n        {\n          appendCells: {\n            sheetId: Number($env.GOOGLE_SHEET_READY_GID || 0),\n            rows: [\n              {\n                values\n              }\n            ],\n            fields: 'userEnteredValue'\n          }\n        }\n      ]\n    }\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7568,
+        2560
+      ],
+      "id": "daf2dedf-4caf-4c82-9504-9a1c441acebc",
+      "name": "Build Google Sheet Append Body"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/<GOOGLE_SHEET_SPREADSHEET_ID>:batchUpdate",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.sheet_batch_update_body }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        7920,
+        2560
+      ],
+      "id": "82e1c279-4fc9-4d68-a529-30aa6982659a",
+      "name": "Append Ready Lead to Google Sheet",
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        864,
+        3552
+      ],
+      "id": "79ea2221-0be8-48a4-8505-9f4221a1adf7",
+      "name": "Wait",
+      "webhookId": "<DISCORD_WEBHOOK_ID>"
+    },
+    {
+      "parameters": {
+        "content": "## Budget + batch mode (corrected)\n\nReal caps now enforced (single source: Search Strategy Config -> strategy_config.budget):\n\n- 10 Outscraper queries/run\n- 20 Maps results/query\n- 120 raw unique domains before CRM skip\n- 35 companies through the free regex Homepage Evidence Gate\n- 15 new companies actually crawled + DeepSeek'd/run (this used to silently run as 118-250; that bug is fixed)\n- max 2 deep pages/company\n- one Discord batch summary per run, now also reporting prospect-log count\n\nKnown companies saved to CouchDB (`company:*`) are skipped before Crawl4AI/DeepSeek. Every company Maps returns (~120/run) is now separately logged as a lightweight `prospect:*` doc regardless of whether it gets crawled this run - see Prospect Log Notes.",
+        "height": 380,
+        "width": 500,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        6720,
+        2176
+      ],
+      "id": "f05bf161-718c-49bc-95f0-a3da801089b1",
+      "name": "Budget Batch Notes"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ (($env.COUCHDB_BASE_URL || 'https://<COUCHDB_PROXY_DOMAIN>').replace(/\\/$/, '')) + '/' + ($env.CRM_DB || '<CRM_DB_NAME>') + '/_find' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { selector: { type: 'strategy', status: 'active' }, sort: [{ created_at: 'desc' }], limit: 1 } }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1168,
+        2816
+      ],
+      "id": "5ee58d6d-1589-4605-961c-b4a5a33e8eac",
+      "name": "GET Strategy Pool"
+    },
+    {
+      "parameters": {
+        "jsCode": "const ctx = (() => {\n  try { return $('Pass Run Context').first().json || {}; } catch (e) { return $json || {}; }\n})();\n\nconst docs = $json.docs || $json.body?.docs || [];\nconst active_strategy = docs[0] || null;\n\n// Main modular place to add countries, personas, and search terms.\nconst config = {\n  excluded_business_countries: [\n    'japan',\n    'indonesia',\n    'south korea',\n    'republic of korea',\n    'thailand',\n    'maldives',\n    'spain'\n  ],\n\n  markets: [\n    { country: 'United Kingdom', region: 'GB', language: 'en' },\n    { country: 'Ireland', region: 'IE', language: 'en' },\n    { country: 'France', region: 'FR', language: 'fr' },\n    { country: 'Germany', region: 'DE', language: 'de' },\n    { country: 'Italy', region: 'IT', language: 'it' },\n    { country: 'Switzerland', region: 'CH', language: 'en' },\n    { country: 'Netherlands', region: 'NL', language: 'en' },\n    { country: 'Belgium', region: 'BE', language: 'en' },\n    { country: 'Austria', region: 'AT', language: 'de' },\n    { country: 'United Arab Emirates', region: 'AE', language: 'en' },\n    { country: 'United States', region: 'US', language: 'en' },\n    { country: 'Australia', region: 'AU', language: 'en' },\n    { country: 'Singapore', region: 'SG', language: 'en' },\n    { country: 'Qatar', region: 'QA', language: 'en' },\n    { country: 'Saudi Arabia', region: 'SA', language: 'en' }\n  ],\n\n  google_maps_terms: [\n    'dive travel agency',\n    'diving holidays',\n    'scuba diving holidays',\n    'liveaboard diving',\n    'dive safari',\n    'dive tour operator',\n    'PADI dive centre holidays',\n    'SSI dive centre travel',\n    'scuba diving club trips',\n    'Maldives diving holidays',\n    'luxury diving holidays',\n    'dive expedition company',\n    'group dive travel',\n    'overseas diving trips',\n    'DMC incentive travel',\n    'destination management company incentive travel',\n    'MICE travel agency luxury',\n    'corporate incentive travel agency',\n    'luxury adventure travel agency',\n    'private island travel agency Maldives',\n    'PADI dive centre',\n    'SSI dive centre',\n    'scuba diving club',\n    'dive club',\n    'scuba instructor',\n    'dive school',\n    'dive travel',\n    'scuba travel agency',\n    'dive holiday company',\n    'diving tour operator',\n    'liveaboard agency',\n    'dive safari agency',\n    'group diving trips',\n    'international dive trips',\n    'overseas scuba trips',\n    'adventure travel agency',\n    'luxury adventure travel',\n    'group travel agency',\n    'incentive travel agency',\n    'MICE agency',\n    'destination management company',\n    'corporate retreat planner',\n    'luxury travel advisor',\n    'private group travel',\n    'island travel specialist'\n  ],\n\n  directory_seed_terms: [\n    'dive show exhibitors',\n    'scuba diving exhibition exhibitors',\n    'dive travel directory',\n    'DMC directory incentive travel',\n    'MICE agency directory',\n    'luxury travel advisor directory',\n    'incentive travel managers association directory'\n  ],\n\n  soft_monitor_terms: [\n    'looking for Maldives liveaboard',\n    'recommend Maldives diving trip',\n    'group dive trip Maldives',\n    'Maldives dive safari recommendations',\n    'best Maldives liveaboard for group'\n  ],\n\n  budget: {\n    queries_per_run: 10,\n    outscraper_limit_per_query: 20,\n    raw_domain_pool_per_run: 120,\n    new_companies_to_crawl_per_run: 15,\n    max_deep_pages_per_company: 2,\n    max_deepseek_prequal_per_run: 35\n  }\n};\n\nreturn [{\n  json: {\n    ...ctx,\n    active_strategy,\n    strategy_config: config,\n    query_source: active_strategy ? 'active_strategy' : 'modular_default_v4'\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1392,
+        2816
+      ],
+      "id": "70af82e2-e0af-4279-85dd-81bac948d3af",
+      "name": "Search Strategy Config"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "discord-intel-command",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        112,
+        1808
+      ],
+      "id": "75393ca3-5297-42e0-acb6-9a886e56b68d",
+      "name": "Discord Command Webhook",
+      "webhookId": "<DISCORD_WEBHOOK_ID>"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const j = $json.body || $json;\nconst content = j.content || j.message?.content || j.data?.options?.[0]?.value || j.text || '';\nconst author = j.author?.username || j.member?.user?.username || j.user?.username || 'discord';\nconst channel_id = j.channel_id || j.channelId || j.channel?.id || '';\nconst text = String(content).trim();\nlet command = 'ignore';\nlet instruction = '';\nlet strategy_id = '';\nif (/^\\/define\\b/i.test(text)) {\n  command = 'define'; instruction = text.replace(/^\\/define\\s*/i,'').trim();\n} else if (/^\\/refine\\b/i.test(text)) {\n  command = 'refine'; instruction = text.replace(/^\\/refine\\s*/i,'').trim();\n  const m = instruction.match(/STRAT-[A-Z0-9-]+/i); if (m) strategy_id = m[0].toUpperCase();\n} else if (/^\\/activate\\b/i.test(text)) {\n  command = 'activate'; instruction = text.replace(/^\\/activate\\s*/i,'').trim();\n  const m = instruction.match(/STRAT-[A-Z0-9-]+/i); if (m) strategy_id = m[0].toUpperCase();\n} else if (/^\\/status\\b/i.test(text)) {\n  command = 'status'; instruction = text.replace(/^\\/status\\s*/i,'').trim();\n} else if (/^\\/run\\b/i.test(text)) {\n  command = 'run'; instruction = text.replace(/^\\/run\\s*/i,'').trim() || 'leads';\n  const m = instruction.match(/STRAT-[A-Z0-9-]+/i); if (m) strategy_id = m[0].toUpperCase();\n}\nreturn { json: { command, instruction, strategy_id, author, channel_id, received_at: new Date().toISOString(), raw_content: text } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        336,
+        1808
+      ],
+      "id": "1cdee3ee-42cc-467d-ad91-06048f3d6a48",
+      "name": "Parse Discord Command"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "define",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "751102e2-547e-46ef-8a3d-2ca72ec01806"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "DEFINE"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "refine",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "871e09c7-b3f7-44b2-a334-c27720df288c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "REFINE"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "activate",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "2297537d-33aa-4670-8005-fc2047a04525"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ACTIVATE"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "status",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "0d0869ba-cc21-4aba-9c03-908fe370d0a7"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "STATUS"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "run",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e1e39312-f9e2-4526-96da-cd3246a7fa82"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "RUN"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        1808
+      ],
+      "id": "d40cbc0c-6b3e-4e22-9e58-bfc8268af5cf",
+      "name": "Discord Command Switch"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.deepseek.com/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  model: 'deepseek-v4-flash',\n  thinking: { type: 'disabled' },\n  response_format: { type: 'json_object' },\n  max_tokens: 1800,\n  messages: [\n    {\n      role: 'system',\n      content: [\n        'You design lead discovery strategies for a Maldivian luxury liveaboard charter business.',\n        'The strategy will be used by n8n with Outscraper Google Maps, Crawl4AI, DeepSeek, CouchDB, Google Sheets, and Discord.',\n        'Good personas: scuba_instructor, dmc, tour_operator_travel_agency, dive_center.',\n        'Good targets include dive travel agencies, dive tour operators, PADI/SSI dive centres selling holidays, scuba clubs with trips, DMCs handling incentive/MICE/luxury/adventure travel, and luxury travel advisors.',\n        'Hard blacklist for business base: Japan, Indonesia, South Korea, Thailand, Maldives, Spain. Do not blacklist companies just because they sell those destinations.',\n        'Also generate ideas for directories/exhibitions/forums, but keep Google Maps queries executable.',\n        'Return strict JSON only with this schema:',\n        '{ \"strategy_name\":\"\", \"target_summary\":\"\", \"markets\":[{\"country\":\"\",\"region\":\"\",\"language\":\"\"}], \"queries\":[{\"query\":\"\",\"region\":\"\",\"language\":\"\",\"rationale\":\"\"}], \"positive_signals\":[], \"negative_signals\":[], \"page_priorities\":[], \"directory_seed_terms\":[], \"soft_monitor_terms\":[], \"max_queries_per_run\":10, \"max_new_companies_to_crawl\":15, \"notes\":\"\" }',\n        '',\n        'Create 12 to 24 diverse Google Maps queries. Cover multiple personas and markets. Avoid near-duplicate query wording.',\n        '',\n        'Include separate query groups for:',\n        '- dive centres selling holidays',\n        '- dive clubs arranging international trips',\n        '- independent scuba instructors organizing group travel',\n        '- dive travel agencies',\n        '- liveaboard and dive safari agencies',\n        '- DMCs and destination management companies',\n        '- incentive travel and MICE agencies',\n        '- luxury adventure travel agencies',\n        '- corporate retreat and group travel planners',\n        '',\n        'Do not require the word Maldives in every query.',\n        'The company can be relevant through international diving, group travel, liveaboards, luxury adventure travel, incentive travel, or charter-compatible clients.',\n        '',\n        'Queries containing \"Maldives\" too often return the same companies repeatedly, so diversify destination and commercial-intent wording.',\n        'Be specific. Avoid generic tourism terms.'\n      ].join('\\n')\n    },\n    {\n      role: 'user',\n      content: `${$json.command === 'refine' ? 'Refine strategy instruction' : 'Create strategy instruction'}:\\n${$json.instruction}`\n    }\n  ]\n} }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        800,
+        1648
+      ],
+      "id": "e3533b9e-4bf3-459c-8805-268e79318aee",
+      "name": "DeepSeek Strategy Planner"
+    },
+    {
+      "parameters": {
+        "jsCode": "const source = $('Parse Discord Command').item.json;\nlet strategy = {};\ntry { strategy = JSON.parse($json?.choices?.[0]?.message?.content || '{}'); }\ncatch (e) { throw new Error('Strategy JSON parse failed: ' + e.message); }\nconst now = new Date().toISOString();\nconst day = now.slice(0, 10).replace(/-/g, '');\nconst rand = Math.random().toString(36).slice(2, 8).toUpperCase();\nconst strategy_id = `STRAT-${day}-${rand}`;\nreturn [{ json: { _id: `strategy:${strategy_id}`, type: 'strategy', strategy_id, status: 'draft', created_at: now, updated_at: now, created_by: source.author, source_channel_id: source.channel_id, source_command: source.command, source_instruction: source.instruction, parent_strategy_id: source.strategy_id || '', ...strategy } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        1648
+      ],
+      "id": "d57f2080-cb01-4907-bc7f-cc1e417a216c",
+      "name": "Parse Strategy JSON"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ (($env.COUCHDB_BASE_URL || 'https://<COUCHDB_PROXY_DOMAIN>').replace(/\\/$/, '')) + '/' + ($env.CRM_DB || '<CRM_DB_NAME>') + '/' + encodeURIComponent($json._id) }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1248,
+        1648
+      ],
+      "id": "98d8e9ac-1ae9-45be-af36-ec9e7ad725ce",
+      "name": "PUT Strategy to CouchDB"
+    },
+    {
+      "parameters": {
+        "jsCode": "const s = $('Parse Strategy JSON').item.json;\nconst queries = (s.queries || []).slice(0, 8).map((q, i) => `${i + 1}. ${q.query}`).join('\\n');\nreturn [{ json: { content: `🧠 Strategy created: **${s.strategy_name || s.strategy_id}**\\nID: \\`${s.strategy_id}\\`\\nStatus: ${s.status}\\n\\nTarget: ${s.target_summary || 'n/a'}\\n\\nSample queries:\\n${queries || 'No queries generated'}\\n\\nNext: \\`/activate ${s.strategy_id}\\` then \\`/run leads\\`.` } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1472,
+        1648
+      ],
+      "id": "50a34887-f468-4cd9-afaf-4ad600523053",
+      "name": "Build Strategy Discord Reply"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "<DISCORD_GUILD_ID>",
+          "mode": "id"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "<DISCORD_CHANNEL_ID>",
+          "mode": "id"
+        },
+        "content": "={{ $json.content }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1696,
+        1648
+      ],
+      "id": "2bdee5fa-6a7d-451b-90b4-6fc2d0dad498",
+      "name": "Send Strategy Reply",
+      "webhookId": "<DISCORD_WEBHOOK_ID>"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ (($env.COUCHDB_BASE_URL || 'https://<COUCHDB_PROXY_DOMAIN>').replace(/\\/$/, '')) + '/' + ($env.CRM_DB || '<CRM_DB_NAME>') + '/_find' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { selector: { type: 'strategy' }, sort: [{ updated_at: 'desc' }], limit: 5 } }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        800,
+        2016
+      ],
+      "id": "4be15849-ce2c-488b-b884-187d9327a2a0",
+      "name": "GET Strategy Status"
+    },
+    {
+      "parameters": {
+        "jsCode": "const docs = $json.docs || $json.body?.docs || [];\nconst active = docs.find(d => d.status === 'active');\nconst lines = docs.map(d => `• ${d.strategy_id} — ${d.status} — ${d.strategy_name || 'unnamed'}`).join('\\n');\nreturn [{ json: { content: `📌 Strategy status\\nActive: ${active ? active.strategy_id + ' — ' + (active.strategy_name || '') : 'none'}\\n\\nRecent strategies:\\n${lines || 'none'}` } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        2016
+      ],
+      "id": "c3aff470-0c63-458d-9a6e-0ff1783e5339",
+      "name": "Build Status Reply"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "<DISCORD_GUILD_ID>",
+          "mode": "id"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "<DISCORD_CHANNEL_ID>",
+          "mode": "id"
+        },
+        "content": "={{ $json.content }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        2016
+      ],
+      "id": "acf773a9-4937-4d47-b500-bc831c494c40",
+      "name": "Send Status Reply",
+      "webhookId": "<DISCORD_WEBHOOK_ID>"
+    },
+    {
+      "parameters": {
+        "url": "={{ (($env.COUCHDB_BASE_URL || 'https://<COUCHDB_PROXY_DOMAIN>').replace(/\\/$/, '')) + '/' + ($env.CRM_DB || '<CRM_DB_NAME>') + '/' + encodeURIComponent('strategy:' + $json.strategy_id) }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        800,
+        1856
+      ],
+      "id": "02b6d985-d7e1-431a-a273-b7c41169f19d",
+      "name": "GET Strategy For Activate"
+    },
+    {
+      "parameters": {
+        "jsCode": "const cmd = $('Parse Discord Command').item.json;\nconst doc = $json.body || $json;\nif (!cmd.strategy_id) return [{ json: { content: '⚠️ Missing strategy ID. Use `/activate STRAT-...`', skip_put: true } }];\nif (!doc._id || !doc._rev) return [{ json: { content: `⚠️ Strategy not found: ${cmd.strategy_id}`, skip_put: true } }];\nreturn [{ json: { ...doc, status: 'active', activated_at: new Date().toISOString(), updated_at: new Date().toISOString(), activated_by: cmd.author } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        1856
+      ],
+      "id": "5133bb8a-221a-444d-b8de-fb60e36f5308",
+      "name": "Build Activated Strategy Doc"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ (($env.COUCHDB_BASE_URL || 'https://<COUCHDB_PROXY_DOMAIN>').replace(/\\/$/, '')) + '/' + ($env.CRM_DB || '<CRM_DB_NAME>') + '/' + encodeURIComponent($json._id || 'skip') }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1248,
+        1856
+      ],
+      "id": "47548abd-1862-495e-8d99-53dc261675da",
+      "name": "PUT Activated Strategy"
+    },
+    {
+      "parameters": {
+        "jsCode": "const cmd = $('Parse Discord Command').item.json;\nconst doc = $('Build Activated Strategy Doc').item.json;\nif (doc.skip_put) return [{ json: { content: doc.content } }];\nreturn [{ json: { content: `✅ Activated strategy \\`${cmd.strategy_id}\\`. Use \\`/run leads\\` to start discovery.` } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1472,
+        1856
+      ],
+      "id": "45d1040e-0ee5-4e20-b144-f46b93f3bad3",
+      "name": "Build Activate Reply"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "<DISCORD_GUILD_ID>",
+          "mode": "id"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "<DISCORD_CHANNEL_ID>",
+          "mode": "id"
+        },
+        "content": "={{ $json.content }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1696,
+        1856
+      ],
+      "id": "2573a0e4-2b90-417f-86cd-3c61d43495df",
+      "name": "Send Activate Reply",
+      "webhookId": "<DISCORD_WEBHOOK_ID>"
+    },
+    {
+      "parameters": {
+        "jsCode": "const cmd = $('Parse Discord Command').item.json;\nreturn [{ json: { content: `▶️ Starting lead discovery run${cmd.strategy_id ? ' with ' + cmd.strategy_id : ''}. Watch #crm-alerts for the batch report.` } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        2208
+      ],
+      "id": "df5c4231-f30a-4b64-8966-fc8b0448a044",
+      "name": "Build Run Started Reply"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "<DISCORD_GUILD_ID>",
+          "mode": "id"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "<DISCORD_CHANNEL_ID>",
+          "mode": "id"
+        },
+        "content": "={{ $json.content }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        2208
+      ],
+      "id": "53d14f7e-4f5a-430f-93b4-0f814f2654fd",
+      "name": "Send Run Started Reply",
+      "webhookId": "<DISCORD_WEBHOOK_ID>"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { content: 'Ignored. Commands: `/define`, `/refine`, `/activate`, `/status`, `/run leads`.' } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        2416
+      ],
+      "id": "1d063753-79ab-4895-b564-153d8a830e56",
+      "name": "Build Ignore Reply"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "<DISCORD_GUILD_ID>",
+          "mode": "id"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "<DISCORD_CHANNEL_ID>",
+          "mode": "id"
+        },
+        "content": "={{ $json.content }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        2416
+      ],
+      "id": "df34759c-85c7-4e2b-bc7d-d521da98abc4",
+      "name": "Send Ignore Reply",
+      "webhookId": "<DISCORD_WEBHOOK_ID>"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nlet MAX_DEEPSEEK_PREQUAL_PER_RUN = 35;\ntry {\n  const budgetCfg = $('Search Strategy Config').first().json.strategy_config?.budget;\n  if (budgetCfg?.max_deepseek_prequal_per_run) MAX_DEEPSEEK_PREQUAL_PER_RUN = Number(budgetCfg.max_deepseek_prequal_per_run);\n} catch (e) {}\n\nfunction txt(v) {\n  if (v == null) return '';\n  if (typeof v === 'string') return v;\n  try { return JSON.stringify(v); } catch { return String(v); }\n}\n\nfunction has(re, text) {\n  return re.test(text);\n}\n\nfunction scoreLead(j) {\n  const text = [\n    j.company_name,\n    j.domain,\n    j.website,\n    j.category,\n    j.maps_type,\n    j.maps_subtypes,\n    j.discovery_query,\n    j.source_query,\n    j.homepage_markdown,\n    j.internal_links,\n    j.external_links\n  ].map(txt).join(' ').toLowerCase();\n\n  let score = 0;\n  const reasons = [];\n\n  const dive =\n    /(scuba|diving|dive|dives|padi|ssi|cmas|bsac|raid|plongée|plongee|tauchen|tauchschule|tauchzentrum|tauchreise|duiken|duik)/i;\n\n  const travel =\n    /(liveaboard|safari|dive safari|tauchsafari|cruise|croisière|croisiere|red sea|egypt|maldives|maldivian|dive trip|diving trip|dive travel|scuba travel|holiday|holidays|voyage|reise|reisen|tour|tours|expedition|boat trip|yacht|charter|group trip)/i;\n\n  const commercial =\n    /(scuba tour agency|tour agency|tour operator|travel agent|travel agency|reisebüro|cruise agency|boat tour agency|dmc|destination management|mice|incentive travel|corporate retreat)/i;\n\n  const bad =\n    /(swim school|schwimmschule|skydiving|fallschirm|data science|education center|technologisches institut|outdoor sports store|bicycle shop|shoe shop|software|restaurant|hotel only|real estate)/i;\n\n  const hasDive = has(dive, text);\n  const hasTravel = has(travel, text);\n  const hasCommercial = has(commercial, text);\n  const hasBad = has(bad, text);\n\n  if (hasDive) {\n    score += 10;\n    reasons.push('dive');\n  }\n\n  if (hasTravel) {\n    score += 15;\n    reasons.push('travel');\n  }\n\n  if (hasCommercial) {\n    score += 10;\n    reasons.push('commercial_travel');\n  }\n\n  if (hasBad) {\n    score -= 30;\n    reasons.push('bad_category');\n  }\n\n  const pass =\n    !hasBad &&\n    (\n      (hasDive && hasTravel) ||\n      (hasDive && hasCommercial) ||\n      (hasCommercial && /(maldives|liveaboard|yacht|charter|cruise|incentive|retreat)/i.test(text))\n    );\n\n  return {\n    score,\n    pass,\n    reasons,\n    hasDive,\n    hasTravel,\n    hasCommercial,\n    hasBad\n  };\n}\n\nconst out = [];\n\nfor (const item of items) {\n  const j = item.json || {};\n  const gate = scoreLead(j);\n\n  if (!gate.pass) continue;\n\n  out.push({\n    json: {\n      ...j,\n      homepage_evidence_gate: gate\n    }\n  });\n}\n\nout.sort((a, b) => {\n  return Number(b.json.homepage_evidence_gate.score || 0) -\n    Number(a.json.homepage_evidence_gate.score || 0);\n});\n\nreturn out.slice(0, MAX_DEEPSEEK_PREQUAL_PER_RUN);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1520,
+        3088
+      ],
+      "id": "4436adb5-4d5b-4414-8252-106aeb1bb3a7",
+      "name": "Homepage Evidence Gate1"
+    },
+    {
+      "parameters": {
+        "jsCode": "function canonicalDomain(value) {\n  if (!value) return '';\n\n  let s = String(value).trim().toLowerCase();\n\n  s = s.replace(/^['\"]|['\"]$/g, '').trim();\n  s = s.replace(/^[a-z][a-z0-9+.-]*:\\/\\//i, '');\n  s = s.replace(/^\\/\\//, '');\n  s = s.replace(/^.*@/, '');\n  s = s.split(/[/?#]/)[0];\n  s = s.replace(/:\\d+$/, '');\n  s = s.replace(/^www\\./, '').replace(/\\.$/, '').trim();\n\n  if (!s || !s.includes('.')) return '';\n  if (!/^[a-z0-9.-]+$/.test(s)) return '';\n\n  return s;\n}\n\n// Logs a lightweight prospect doc for EVERY company Outscraper/Maps\n// returned this run (after dedupe/country filter), regardless of\n// whether it ever gets crawled or passes any later gate. This is the\n// permanent record of \"we discovered this\" so nothing found by a\n// Google Maps query is ever silently lost, even if the crawl budget\n// cap means it doesn't get researched this run.\nconst seen = new Set();\nconst candidates = [];\n\nfor (const item of $input.all()) {\n  const j = item.json || {};\n  const domain = canonicalDomain(j.domain || j.website);\n\n  if (!domain) continue;\n  if (seen.has(domain)) continue;\n  seen.add(domain);\n\n  candidates.push({\n    _id: `prospect:${domain}`,\n    domain,\n    company_name: j.company_name || '',\n    website: j.website || '',\n    source: j.source || j.discovery_source || '',\n    discovery_query: j.discovery_query || j.source_query || '',\n    target_country: j.target_country || j.business_country || '',\n    category: j.category || j.maps_type || '',\n    phone: j.phone || '',\n    place_id: j.place_id || '',\n    rating: j.rating ?? null,\n    reviews: j.reviews ?? null,\n    run_id: j.run_id || ''\n  });\n}\n\nreturn [{\n  json: {\n    keys: candidates.map(c => c._id),\n    candidates\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        832,
+        3360
+      ],
+      "id": "b1a1c001-0000-4000-8000-000000000001",
+      "name": "Build Prospect Docs"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ (($env.COUCHDB_BASE_URL || 'https://<COUCHDB_PROXY_DOMAIN>').replace(/\\/$/, '')) + '/' + ($env.CRM_DB || '<CRM_DB_NAME>') + '/_all_docs?include_docs=true' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { keys: $json.keys } }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1072,
+        3360
+      ],
+      "id": "b1a1c001-0000-4000-8000-000000000002",
+      "name": "GET Existing Prospects Bulk",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const source = $('Build Prospect Docs').first().json;\nconst rows = $json.rows || $json.body?.rows || [];\nconst existingById = new Map();\n\nfor (const row of rows) {\n  if (row?.doc && !row.error) {\n    existingById.set(row.id, row.doc);\n  }\n}\n\nconst now = new Date().toISOString();\nconst docs = [];\n\nfor (const incoming of (source.candidates || [])) {\n  const existing = existingById.get(incoming._id);\n\n  const doc = {\n    ...(existing || {}),\n    ...incoming,\n\n    type: 'prospect',\n    first_seen_at: existing?.first_seen_at || now,\n    last_seen_at: now,\n    times_seen: Number(existing?.times_seen || 0) + 1\n  };\n\n  if (existing?._rev) {\n    doc._rev = existing._rev;\n  }\n\n  docs.push(doc);\n}\n\nreturn [{\n  json: {\n    prospect_docs: docs,\n    prospect_count: docs.length\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1312,
+        3360
+      ],
+      "id": "b1a1c001-0000-4000-8000-000000000003",
+      "name": "Merge Prospect Docs"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ (($env.COUCHDB_BASE_URL || 'https://<COUCHDB_PROXY_DOMAIN>').replace(/\\/$/, '')) + '/' + ($env.CRM_DB || '<CRM_DB_NAME>') + '/_bulk_docs' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { docs: $json.prospect_docs } }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          },
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1552,
+        3360
+      ],
+      "id": "b1a1c001-0000-4000-8000-000000000004",
+      "name": "BULK Upsert Prospects",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "## Prospect log (new)\n\nEvery company Outscraper returns this run (after dedupe/country filter) gets a lightweight `prospect:*` doc in CouchDB here — win or lose, crawled or not.\n\nThis is separate from `company:*` docs (full CRM records created only after DeepSeek research). It exists so a company that got cut by the crawl-budget cap, or rejected at any gate, is still queryable later instead of vanishing.\n\nFire-and-forget: never blocks or slows the main discovery -> crawl chain.",
+        "height": 300,
+        "width": 420,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        832,
+        3560
+      ],
+      "id": "b1a1c001-0000-4000-8000-000000000005",
+      "name": "Prospect Log Notes"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// NOTE: sheetId below is a PLACEHOLDER (999999999).\n// Create a second tab in the same spreadsheet (e.g. \"Manual Review\"),\n// open it in the browser, copy the gid= number from the URL, and\n// replace 999999999 with that number before running this workflow.\nconst row = [\n  $json.company_name,\n  $json.website,\n  $json.domain,\n  $json.country,\n  $json.priority,\n  $json.persona,\n  $json.icp_score,\n  $json.intent_score,\n  $json.contact_channel,\n  $json.contact_value,\n  $json.phone,\n  $json.instagram_url,\n  $json.personalized_first_line,\n  $json.reason,\n  $json.outreach_eligibility,\n  $json.hold_reason,\n  $json.crm_company_id,\n  $json.run_id\n];\n\nconst values = row.map(value => ({\n  userEnteredValue: {\n    stringValue: String(value ?? '')\n  }\n}));\n\nreturn {\n  json: {\n    ...$json,\n    manual_review_batch_update_body: {\n      requests: [\n        {\n          appendCells: {\n            sheetId: Number($env.GOOGLE_SHEET_MANUAL_GID || 0),\n            rows: [\n              { values }\n            ],\n            fields: 'userEnteredValue'\n          }\n        }\n      ]\n    }\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7568,
+        3260
+      ],
+      "id": "b1a1c001-0000-4000-8000-000000000006",
+      "name": "Build Manual Review Sheet Row"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/<GOOGLE_SHEET_SPREADSHEET_ID>:batchUpdate",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.manual_review_batch_update_body }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        7920,
+        3260
+      ],
+      "id": "b1a1c001-0000-4000-8000-000000000007",
+      "name": "Append Manual Review Lead to Google Sheet",
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "## Manual Review tab (new)\n\nHOLD leads (decent research, but no email AND priority C, or genuinely zero scraped contact) now also get written to a SECOND tab in the same spreadsheet, not just a Discord summary line.\n\nACTION NEEDED: create a tab named e.g. \"Manual Review\" in the sheet, then replace the placeholder sheetId (999999999) in \"Build Manual Review Sheet Row\" with that tab's real gid.\n\nThis is where you go look at the site by hand and find a contact form / phone / DM yourself.",
+        "height": 280,
+        "width": 420,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        7568,
+        3480
+      ],
+      "id": "b1a1c001-0000-4000-8000-000000000008",
+      "name": "Manual Review Notes"
+    }
+  ],
+  "connections": {
+    "Choose Run Mode": {
+      "main": [
+        [
+          {
+            "node": "Run Mode Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Mode Switch": {
+      "main": [
+        [
+          {
+            "node": "CRM Smoke Test Lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Run Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CRM Smoke Test Lead": {
+      "main": [
+        [
+          {
+            "node": "Normalize CRM Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Run Context": {
+      "main": [
+        [
+          {
+            "node": "PUT Run Document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PUT Run Document": {
+      "main": [
+        [
+          {
+            "node": "Pass Run Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pass Run Context": {
+      "main": [
+        [
+          {
+            "node": "GET Strategy Pool",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Public Contact Hints": {
+      "main": [
+        [
+          {
+            "node": "DeepSeek Full Research1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize CRM Lead": {
+      "main": [
+        [
+          {
+            "node": "GET CRM Company",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET CRM Company": {
+      "main": [
+        [
+          {
+            "node": "Company Lookup Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Company Lookup Status": {
+      "main": [
+        [
+          {
+            "node": "Build New CRM Company",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Updated CRM Company",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build New CRM Company": {
+      "main": [
+        [
+          {
+            "node": "PUT CRM Company",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Updated CRM Company": {
+      "main": [
+        [
+          {
+            "node": "PUT CRM Company",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PUT CRM Company": {
+      "main": [
+        [
+          {
+            "node": "Classify Company PUT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Company PUT": {
+      "main": [
+        [
+          {
+            "node": "Company PUT Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Company PUT Result": {
+      "main": [
+        [
+          {
+            "node": "GET Saved CRM Company",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GET Latest Company After Conflict",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "CRM Company Error Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Saved CRM Company": {
+      "main": [
+        [
+          {
+            "node": "Build CRM Contact Keys",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Latest Company After Conflict": {
+      "main": [
+        [
+          {
+            "node": "Rebuild Company Retry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rebuild Company Retry": {
+      "main": [
+        [
+          {
+            "node": "PUT Company Retry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PUT Company Retry": {
+      "main": [
+        [
+          {
+            "node": "Classify Company Retry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Company Retry": {
+      "main": [
+        [
+          {
+            "node": "Company Retry Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Company Retry Result": {
+      "main": [
+        [
+          {
+            "node": "GET Saved CRM Company",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "CRM Company Error Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build CRM Contact Keys": {
+      "main": [
+        [
+          {
+            "node": "GET Existing Contacts Bulk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Existing Contacts Bulk": {
+      "main": [
+        [
+          {
+            "node": "Build Contact Bulk Upsert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Contact Bulk Upsert": {
+      "main": [
+        [
+          {
+            "node": "Has Contact Docs?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Contact Docs?": {
+      "main": [
+        [
+          {
+            "node": "BULK Upsert Contacts",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Pass No Contacts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BULK Upsert Contacts": {
+      "main": [
+        [
+          {
+            "node": "Build Discovery Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pass No Contacts": {
+      "main": [
+        [
+          {
+            "node": "Build Discovery Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Discovery Event": {
+      "main": [
+        [
+          {
+            "node": "PUT Discovery Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PUT Discovery Event": {
+      "main": [
+        [
+          {
+            "node": "Outreach Eligibility Guard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outreach Eligibility Guard": {
+      "main": [
+        [
+          {
+            "node": "Eligibility Result",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Build Discord Batch Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eligibility Result": {
+      "main": [
+        [
+          {
+            "node": "Ready For Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Held CRM Lead Output",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Blocked CRM Lead Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ready For Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Build Google Sheet Append Body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Discord Batch Summary": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Discovery Queries1": {
+      "main": [
+        [
+          {
+            "node": "Outscraper Google Maps1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outscraper Google Maps1": {
+      "main": [
+        [
+          {
+            "node": "Flatten Maps Results1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Flatten Maps Results1": {
+      "main": [
+        [
+          {
+            "node": "Dedupe & Hard Country Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dedupe & Hard Country Filter1": {
+      "main": [
+        [
+          {
+            "node": "Prepare Known Company Lookup",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Build Prospect Docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crawl4AI Homepage1": {
+      "main": [
+        [
+          {
+            "node": "Normalize Homepage Crawl1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Homepage Crawl1": {
+      "main": [
+        [
+          {
+            "node": "Homepage Evidence Gate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Prequalify1": {
+      "main": [
+        [
+          {
+            "node": "Parse & Gate Qualified Leads1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse & Gate Qualified Leads1": {
+      "main": [
+        [
+          {
+            "node": "Select High-Value Internal Pages1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select High-Value Internal Pages1": {
+      "main": [
+        [
+          {
+            "node": "Crawl4AI Deep Pages1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crawl4AI Deep Pages1": {
+      "main": [
+        [
+          {
+            "node": "Build Research Packet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Research Packet1": {
+      "main": [
+        [
+          {
+            "node": "Extract Public Contact Hints",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Full Research1": {
+      "main": [
+        [
+          {
+            "node": "Final Lead Record1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final Lead Record1": {
+      "main": [
+        [
+          {
+            "node": "Normalize CRM Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Choose Run Mode",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Known Company Lookup": {
+      "main": [
+        [
+          {
+            "node": "CouchDB _all_docs Known Company Lookup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CouchDB _all_docs Known Company Lookup": {
+      "main": [
+        [
+          {
+            "node": "Filter Known Companies Before Crawl",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Known Companies Before Crawl": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Google Sheet Append Body": {
+      "main": [
+        [
+          {
+            "node": "Append Ready Lead to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Crawl4AI Homepage1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Strategy Pool": {
+      "main": [
+        [
+          {
+            "node": "Search Strategy Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Strategy Config": {
+      "main": [
+        [
+          {
+            "node": "Generate Discovery Queries1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Discord Command Webhook": {
+      "main": [
+        [
+          {
+            "node": "Parse Discord Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Discord Command": {
+      "main": [
+        [
+          {
+            "node": "Discord Command Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Discord Command Switch": {
+      "main": [
+        [
+          {
+            "node": "DeepSeek Strategy Planner",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "DeepSeek Strategy Planner",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GET Strategy For Activate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GET Strategy Status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Run Started Reply",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create Run Context",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Ignore Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Strategy Planner": {
+      "main": [
+        [
+          {
+            "node": "Parse Strategy JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Strategy JSON": {
+      "main": [
+        [
+          {
+            "node": "PUT Strategy to CouchDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PUT Strategy to CouchDB": {
+      "main": [
+        [
+          {
+            "node": "Build Strategy Discord Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Strategy Discord Reply": {
+      "main": [
+        [
+          {
+            "node": "Send Strategy Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Strategy Status": {
+      "main": [
+        [
+          {
+            "node": "Build Status Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Status Reply": {
+      "main": [
+        [
+          {
+            "node": "Send Status Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Strategy For Activate": {
+      "main": [
+        [
+          {
+            "node": "Build Activated Strategy Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Activated Strategy Doc": {
+      "main": [
+        [
+          {
+            "node": "PUT Activated Strategy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PUT Activated Strategy": {
+      "main": [
+        [
+          {
+            "node": "Build Activate Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Activate Reply": {
+      "main": [
+        [
+          {
+            "node": "Send Activate Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Run Started Reply": {
+      "main": [
+        [
+          {
+            "node": "Send Run Started Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Ignore Reply": {
+      "main": [
+        [
+          {
+            "node": "Send Ignore Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Homepage Evidence Gate1": {
+      "main": [
+        [
+          {
+            "node": "DeepSeek Prequalify1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Prospect Docs": {
+      "main": [
+        [
+          {
+            "node": "GET Existing Prospects Bulk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Existing Prospects Bulk": {
+      "main": [
+        [
+          {
+            "node": "Merge Prospect Docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Prospect Docs": {
+      "main": [
+        [
+          {
+            "node": "BULK Upsert Prospects",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Held CRM Lead Output": {
+      "main": [
+        [
+          {
+            "node": "Build Manual Review Sheet Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Manual Review Sheet Row": {
+      "main": [
+        [
+          {
+            "node": "Append Manual Review Lead to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "99d170eba9dff3862609f73260dd28a216323b520804530c4b3525aef80c0412"
+  }
+}
